@@ -25,7 +25,7 @@ kid  +-------+ +-----------+ +-------+
 To join the Org, a kid uses three services: _Admit_, _Bootstrap_, and _Vault_. Once upon a time, there was a kid (Дід Alik) who created these services. And then Дід Alik used them to join the Org. To create a service, Дід Alik used a git repo (a submodule, to be precise) called _genesis_. Of course, he had to create it first.
 
 ## The _genesis_ submodule
-The _genesis_ submodule creates and maintains distributed (shared) services. The basic idea is that a service **owner** adds a service to the service repository, then a service **agent** offers it to kids, and a service **user** binds with the agent to use the service's API (e.g., _admit.apply_, _bootstrap.configure_, _vault.getrepos_).
+The _genesis_ submodule creates and maintains a distributed (shared) service, which is a superproject of the submodule. The basic idea is that a service **owner** adds a service to the service repository, then a service **agent** offers it to kids, and a service **user** binds with the agent to use the service's API (e.g., _admit.apply_, _bootstrap.configure_, _vault.getrepos_).
 
 The submodule makes use of [Cloudflare Pub/Sub](https://developers.cloudflare.com/pub-sub/) API. It is presently being mocked by a CFW DO.
 
