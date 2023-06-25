@@ -1,6 +1,6 @@
 # Shared services of [the Org](https://github.com/didalik/role-based-org/blob/main/README.md)
 
-Hi there, I'm Дід Alik - the founder of the _Дід Alik & the Kids_ distributed organisation (**the Org**). This document introduces our shared services (**svc**) and presents some use cases. [The first implementation of the shared services](https://github.com/amissine/shex#shared-services) appeared in my Stellar Help Exchange (**HEX**) hobby project. Then I kept adding and using more services to enable kids to join the Org. At that point I realized the services are the cornerstone of the Org.
+Hi there, I'm Дід Alik - the founder of the _Дід Alik & the Kids_ distributed organisation (**the Org**). This document introduces our shared services (**svc**) and presents some use cases. [The first implementation of the shared services](https://github.com/amissine/shex#shared-services) appeared in my Stellar Help Exchange (**HEX**) hobby project. Then I kept adding and using more services until I realized the services are the cornerstone of the Org.
 
 ## Using the services to join the Org
 
@@ -35,6 +35,6 @@ A _broker_ groups together a set of _authenticated_ agents and users of one or m
 
 ## TODO list
 
-Started on June 14, 2023:
+- June 14, 2023. Get rid of `stellar-sdk` dependency, 372.6kb => 25.2kb + 37.4kb sourcemap. Done June 25.
 
-- Get rid of `stellar-sdk` dependency, 372.6kb => 24.5kb + 35.6kb sourcemap
+- June 25. Push the `svc-registry` and `genesis` repos to the Vault.
