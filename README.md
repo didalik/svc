@@ -33,8 +33,8 @@ The submodule makes use of [Cloudflare Pub/Sub](https://developers.cloudflare.co
 
 A _broker_ groups together a set of _authenticated_ agents and users of one or more services. In this sense it is mapped to a service repository. A _topic_ is mapped to a service. Therefore, a _namespace_ is mapped to a set of (sets of) service repositories. For example, 'the Org' would be a namespace for brokers 'Admit', 'Bootstrap', 'Vault'. Or, "All Our Projects" would be a namespace for brokers "Org", "svc", "HEX". If we follow this logic, we find that a _namespace_ can awlays be thought of as a _broker_ - in order to prevent this expansion, we need to see (define?) the difference between a broker and a namespace.
 
-## TODO list
+## TODOs
 
 - June 14, 2023. Get rid of `stellar-sdk` dependency, 372.6kb => 25.2kb + 37.4kb sourcemap. Done June 25.
 
-- June 25. Push the `svc-registry` and `genesis` repos to the Vault.
+- June 25. Push the `svc-registry` and `genesis` repos to the Vault, store the info in the `svc-registry` DO..
