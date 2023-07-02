@@ -37,4 +37,4 @@ A _broker_ groups together a set of _authenticated_ agents and users of one or m
 
 - June 14, 2023. Get rid of `stellar-sdk` dependency, 372.6kb => 25.2kb + 37.4kb sourcemap. Done June 25.
 
-- June 25. Push the `registry` and `genesis` repos to the Vault, store the info in the `svc-registry` CFW DO. Done July 2.
+- June 25. Push the `registry` and `genesis` repos to the Vault, store the info in the `svc-registry` CFW DO. Remember the `rm -rf .git/modules/org` thing. Done July 2.
