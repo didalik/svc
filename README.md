@@ -2,7 +2,7 @@
 
 ![TheOrg.jpg](TheOrg.jpg)
 
-Hi there, I'm Дід Alik - the founder of the _Дід Alik & the Kids_ distributed organisation (**the Org**). This document introduces our shared services (**svc**) and presents some use cases. [The first implementation of the shared services](https://github.com/amissine/shex#shared-services) appeared in my Stellar Help Exchange (**HEX**) hobby project. Then I kept adding and using more services until I realized the services are the cornerstone of the Org.
+Hi there, I'm Дід Alik - the founder of the _Дід Alik & the Kids_ distributed organisation (**the Org**). This document introduces our shared services and presents some use cases. [The first implementation of the shared services](https://github.com/amissine/shex#shared-services) appeared in my Stellar Help Exchange (**HEX**) hobby project. Then I kept adding and using more services until I realized the services are the cornerstone of the Org.
 
 ## Using the services to join the Org
 
@@ -27,7 +27,7 @@ kid  +-------+ +-----------+ +-------+
 To join the Org, a kid uses three services: _Admit_, _Bootstrap_, and _Vault_. Once upon a time, there was a kid (Дід Alik) who created these services. And then Дід Alik used them to join the Org. To create a service, Дід Alik used a git repo (a submodule, to be precise) called _genesis_. Of course, he had to create it first.
 
 ## The _genesis_ submodule
-The _genesis_ submodule creates and maintains a distributed (shared) service, which is a superproject of the submodule. The basic idea is that a service **owner** adds a service to the service repository, then a service **agent** offers it to kids, and a service **user** binds with the agent to use the service's API (e.g., _admit.apply_, _bootstrap.configure_, _vault.getrepos_).
+The _genesis_ submodule creates and maintains a distributed (shared) service, which is also a submodule. The basic idea of a shared service is that a service **owner** adds a service to the service repository, then a service **agent** offers it to kids, and a service **user** binds with the agent to use the service's API (e.g., _admit.apply_, _bootstrap.configure_, _vault.getrepos_).
 
 The submodule makes use of [Cloudflare Pub/Sub](https://developers.cloudflare.com/pub-sub/) API. It is presently being mocked by a CFW DO.
 
