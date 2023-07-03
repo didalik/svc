@@ -1,5 +1,7 @@
 # Shared services of [the Org](https://github.com/didalik/role-based-org/blob/main/README.md)
 
+![TheOrg.jpg](TheOrg.jpg)
+
 Hi there, I'm Дід Alik - the founder of the _Дід Alik & the Kids_ distributed organisation (**the Org**). This document introduces our shared services (**svc**) and presents some use cases. [The first implementation of the shared services](https://github.com/amissine/shex#shared-services) appeared in my Stellar Help Exchange (**HEX**) hobby project. Then I kept adding and using more services until I realized the services are the cornerstone of the Org.
 
 ## Using the services to join the Org
