@@ -1,4 +1,8 @@
-let buttonContinue = document.getElementById('buttonContinue')
+import { setup, } from '../../../../../cfw/src/util.mjs' // {{{1
+
+setup() // {{{1
+
+let buttonContinue = document.getElementById('buttonContinue') // {{{1
 let buttonShare = document.getElementById('buttonShare')
 let divContinue = document.getElementById('divContinue')
 buttonContinue.focus()
@@ -12,3 +16,4 @@ buttonShare.onclick = _ => {
   buttonShare.disabled = true
   buttonShare.style.display = 'none'
 }
+
