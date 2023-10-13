@@ -15,4 +15,5 @@ buttonContinue.onclick = _ => {
 buttonShare.onclick = _ => {
   buttonShare.disabled = true
   buttonShare.style.display = 'none'
+  let bound = window.open(GUEST_USE_SVC_URL, '_blank')
 }
