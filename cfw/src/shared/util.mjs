@@ -3,7 +3,7 @@ import { apiKey, } from '../../../../../../../../../env.mjs'
 
 function setup () { // {{{1
   const loader = new Loader({ apiKey, version: "weekly", });
-  const center = { lat: 25.95850, lng: -80.13810 }
+  const center = { lat: 25.95850, lng: -79.13810 }
   const mapOptions = {
     center,
     mapTypeId: "OSM",
@@ -18,7 +18,7 @@ function setup () { // {{{1
       const marker = new google.maps.Marker({ map, position: center, title: "Your position", });
 
       const infowindow = new google.maps.InfoWindow({
-        content: 'Your message',
+        content: 'You are here',
       }); 
       google.maps.event.addListener(marker, "click", () => {
         infowindow.open(map, marker);
