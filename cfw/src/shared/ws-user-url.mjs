@@ -11,10 +11,7 @@ buttonStop.onclick = _ => {
 window.addEventListener('message', e => { // {{{1
   log(`e.origin ${e.origin}, e.data ${e.data}`)
   boundOrigin ??= e.origin
-  bound.postMessage('roger', e.origin)
-  for (let i = 1; i < 11; i++) {
-    ws.send('["roger that ' + i + '"]')
-  }
+  bound.postMessage(['roger'], e.origin)
 }) // }}}1
 
 loop()
