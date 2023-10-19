@@ -1,4 +1,4 @@
-let ws, bound, boundOrigin // {{{1
+let ws, bound, boundOrigin, queue = [] // {{{1
 let buttonStop = document.getElementById('stop')
 let now = Date.now(), p, goon = true
 
@@ -10,8 +10,12 @@ buttonStop.onclick = _ => {
 }
 window.addEventListener('message', e => { // {{{1
   log(`e.origin ${e.origin}, e.data ${e.data}`)
-  boundOrigin ??= e.origin
-  bound.postMessage(['roger'], e.origin)
+  boundOrigin = e.origin
+  if (bound) {
+    queue.forEach(e => bound.postMessage(e, boundOrigin))
+  } else {
+    queue.push(e.data)
+  }
 })
 window.opener.postMessage('ws-user-url started', window.opener.location) // }}}1
 
@@ -44,13 +48,15 @@ async function loop () { // {{{1
       log(m.data)
       m.data == '{"signal":"unbound"}' && buttonStop.click()
       if (m.data.indexOf(' bound ') > 0) {
-        bound = window.open('BOUND', '_blank'); return;
+        bound = window.open('BOUND', '_blank')
+        return;
       }
       let jsoa
       try {
         jsoa = JSON.parse(m.data)
-        bound.postMessage(jsoa, boundOrigin)
-      } catch(e) { console.error(e) }
+        bound?.postMessage(jsoa, boundOrigin)
+      } catch(e) {}
+      !bound && jsoa && queue.push(jsoa)
     } // }}}2
     await promise.catch(e => console.error(e))
   }
