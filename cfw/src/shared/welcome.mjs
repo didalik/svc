@@ -1,9 +1,16 @@
-let buttonContinue = document.getElementById('buttonContinue')
+let buttonContinue = document.getElementById('buttonContinue') // {{{1
 let buttonShare = document.getElementById('buttonShare')
 let divContinue = document.getElementById('divContinue')
-let GUEST_USE_SVC_URL = 'XXXX'
+let GUEST_USE_SVC_URL = 'GUEST'
+let latitude = XXX, longitude = XXX, bound, boundOrigin
 
-console.log('GUEST_USE_SVC_URL', GUEST_USE_SVC_URL.length, GUEST_USE_SVC_URL)
+window.addEventListener('message', e => { // {{{1
+  console.log(`e.origin ${e.origin}, e.data ${e.data}`)
+  boundOrigin ??= e.origin
+  bound.postMessage([latitude, longitude], e.origin)
+})
+
+console.log('GUEST_USE_SVC_URL length', GUEST_USE_SVC_URL.length) // {{{1
 
 buttonContinue.focus()
 buttonContinue.onclick = _ => {
@@ -15,5 +22,5 @@ buttonContinue.onclick = _ => {
 buttonShare.onclick = _ => {
   buttonShare.disabled = true
   buttonShare.style.display = 'none'
-  let bound = window.open(GUEST_USE_SVC_URL, '_blank')
+  bound = window.open(GUEST_USE_SVC_URL, '_blank')
 }

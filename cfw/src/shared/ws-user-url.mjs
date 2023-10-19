@@ -1,4 +1,4 @@
-let ws, bound, boundOrigin // {{{1
+let ws, bound, boundOrigin, queue = [] // {{{1
 let buttonStop = document.getElementById('stop')
 let now = Date.now(), p, goon = true
 
@@ -10,9 +10,14 @@ buttonStop.onclick = _ => {
 }
 window.addEventListener('message', e => { // {{{1
   log(`e.origin ${e.origin}, e.data ${e.data}`)
-  boundOrigin ??= e.origin
-  bound.postMessage(['roger'], e.origin)
-}) // }}}1
+  boundOrigin = e.origin
+  if (bound) {
+    queue.forEach(e => bound.postMessage(e, boundOrigin))
+  } else {
+    queue.push(e.data)
+  }
+})
+window.opener.postMessage('ws-user-url started', window.opener.location) // }}}1
 
 loop()
 
@@ -20,11 +25,11 @@ async function loop () { // {{{1
   while (goon) {
     let ok, notok, promise = new Promise((g, b) => { ok = g; notok = b; })
     ws = new WebSocket('XXXX')
-    ws.onerror = e => {
+    ws.onerror = e => { // {{{2
       notok(e)
       console.error(e)
     }
-    ws.onclose = a => { // { isTrusted: true }
+    ws.onclose = a => { // { isTrusted: true } {{{2
       log(`disconnected typeof a ${typeof a} a?.isTrusted ${a?.isTrusted}`)
       if (typeof a == 'object') {
         goon = false
@@ -36,21 +41,23 @@ async function loop () { // {{{1
         ok()
       }, 5000)
     }
-    ws.onopen = data => {
+    ws.onopen = data => { // {{{2
       log('connected')
     }
-    ws.onmessage = m => {
+    ws.onmessage = m => { // {{{2
       log(m.data)
       m.data == '{"signal":"unbound"}' && buttonStop.click()
       if (m.data.indexOf(' bound ') > 0) {
-        bound = window.open('BOUND', '_blank'); return;
+        bound = window.open('BOUND', '_blank')
+        return;
       }
       let jsoa
       try {
         jsoa = JSON.parse(m.data)
-        bound.postMessage(jsoa, boundOrigin)
+        bound?.postMessage(jsoa, boundOrigin)
       } catch(e) {}
-    }
+      !bound && jsoa && queue.push(jsoa)
+    } // }}}2
     await promise.catch(e => console.error(e))
   }
   log('stopped.')
