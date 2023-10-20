@@ -49,6 +49,10 @@ async function loop () { // {{{1
       m.data == '{"signal":"unbound"}' && buttonStop.click()
       if (m.data.indexOf(' bound ') > 0) {
         bound = window.open('BOUND', '_blank')
+        let guestId = m.data.split(' ')[2]
+        queue[0].push(+guestId)
+        console.log(queue)
+        ws.send(JSON.stringify(queue[0]))
         return;
       }
       let jsoa
