@@ -1,9 +1,31 @@
 import { Loader } from '@googlemaps/js-api-loader' // {{{1
 import { apiKey, } from '../../../../../../../../../env.mjs'
 
-function setup () { // {{{1
+let google, map, ok, notok // {{{1
+
+function markAgent (data) { // {{{
+  data = JSON.parse(data[0])
+  if (data.length > 2) {
+    return false;
+  }
+  console.log('- markAgent', data)
+
+  let promise = new Promise((g, b) => { ok = g; notok = b; })
+  promise.then(_ => {
+    const marker = new google.maps.Marker({ map, position: { lat: data[0], lng: data[1] }, title: "agent", });
+    const infowindow = new google.maps.InfoWindow({
+      content: 'Undisclosed location',
+    }); 
+    google.maps.event.addListener(marker, "click", () => {
+      infowindow.open(map, marker);
+    });
+  }).catch(e => console.error(e))
+
+  return true;
+}
+
+function setup (center, guestId) { // {{{1
   const loader = new Loader({ apiKey, version: "weekly", });
-  const center = { lat: 25.95850, lng: -80.13810 }
   const mapOptions = {
     center,
     mapTypeId: "OSM",
@@ -11,16 +33,9 @@ function setup () { // {{{1
     streetViewControl: false,
     zoom: 5
   };
-  loader.load().then((google) => {
-    let map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    const marker = new google.maps.Marker({ map, position: center, title: "Your position", });
-
-    const infowindow = new google.maps.InfoWindow({
-      content: 'You are here',
-    }); 
-    google.maps.event.addListener(marker, "click", () => {
-      infowindow.open(map, marker);
-    });
+  loader.load().then(g => {
+    google = g; ok()
+    map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
     // Define OSM map type pointing at the OpenStreetMap tile server
     map.mapTypes.set("OSM", new google.maps.ImageMapType({
@@ -39,5 +54,5 @@ function teardown () { // {{{1
 }
 
 export { // {{{1
-  setup, teardown,
+  markAgent, setup, teardown,
 }
