@@ -9,7 +9,7 @@ buttonStop.onclick = _ => {
   goon = false 
 }
 window.addEventListener('message', e => { // {{{1
-  log(`e.origin ${e.origin}, e.data ${e.data}`)
+  log(`e.origin ${e.origin}, e.data ${e.data}, queue.length ${queue.length}`)
   boundOrigin = e.origin
   if (bound) {
     queue.forEach(e => bound.postMessage(e, boundOrigin))
@@ -60,7 +60,7 @@ async function loop () { // {{{1
         jsoa = JSON.parse(m.data)
         bound?.postMessage(jsoa, boundOrigin)
       } catch(e) {}
-      !bound && jsoa && queue.push(jsoa)
+      !bound && jsoa && queue.push(jsoa) && console.log('queue', queue)
     } // }}}2
     await promise.catch(e => console.error(e))
   }
