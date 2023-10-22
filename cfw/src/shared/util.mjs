@@ -1,27 +1,43 @@
 import { Loader } from '@googlemaps/js-api-loader' // {{{1
 import { apiKey, } from '../../../../../../../../../env.mjs'
 
-let google, map, ok, notok // {{{1
+let google, map, ok, notok, guests = { add: [] } // {{{1
 
-function markAgent (data) { // {{{
-  data = JSON.parse(data[0])
-  if (data.length > 2) {
-    return false;
+function mark (position, title, content) { // {{{1
+  const marker = new google.maps.Marker({ map, position, title, })
+  const infowindow = new google.maps.InfoWindow({ content })
+  google.maps.event.addListener(marker, 'click', _ => infowindow.open(map, marker))
+}
+
+function markGuest (guest) { // {{{1
+  if (guest[2] == guests.myId) {
+    mark({ lat: guest[0], lng: guest[1] }, 'me', 'You are here.')
+  } else {
   }
-  console.log('- markAgent', data)
+}
 
-  let promise = new Promise((g, b) => { ok = g; notok = b; })
-  promise.then(_ => {
-    const marker = new google.maps.Marker({ map, position: { lat: data[0], lng: data[1] }, title: "agent", });
-    const infowindow = new google.maps.InfoWindow({
-      content: 'Undisclosed location',
-    }); 
-    google.maps.event.addListener(marker, "click", () => {
-      infowindow.open(map, marker);
-    });
+function markMore (guest, data) { // {{{1
+  console.log('- markMore guest', guest, 'data', data)
+  if (google) {
+    return markGuest(guest);
+  }
+  let wait = new Promise((g, b) => { guests.ok = g; guests.notok = b; })
+  wait.then(_ => markGuest(guest)).catch(e => console.error(e))
+}
+
+function markup (data) { // {{{1
+  let actor = JSON.parse(data.shift())
+  if (actor.length > 2) { // actor is guest
+    return markMore(actor, data);
+  }
+  console.log('- markup agent', actor, 'data', data)
+
+  let wait = new Promise((g, b) => { ok = g; notok = b; })
+  wait.then(guestId => {
+    guests.myId = guestId
+    mark({ lat: actor[0], lng: actor[1] }, 'agent', 'Undisclosed location')
+    guests.ok && guests.ok()
   }).catch(e => console.error(e))
-
-  return true;
 }
 
 function setup (center, guestId) { // {{{1
@@ -34,7 +50,7 @@ function setup (center, guestId) { // {{{1
     zoom: 5
   };
   loader.load().then(g => {
-    google = g; ok()
+    google = g; ok(guestId)
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
     // Define OSM map type pointing at the OpenStreetMap tile server
@@ -54,5 +70,5 @@ function teardown () { // {{{1
 }
 
 export { // {{{1
-  markAgent, setup, teardown,
+  markup, setup, teardown,
 }
