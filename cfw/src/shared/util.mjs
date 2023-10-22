@@ -13,12 +13,14 @@ function markGuest (guest) { // {{{1
   if (guest[2] == guests.myId) {
     mark({ lat: guest[0], lng: guest[1] }, 'me', 'You are here.')
   } else {
+    mark({ lat: guest[0]-1, lng: guest[1]-1 }, 'guest', 'Visited on ' + new Date(guest[2]))
   }
 }
 
 function markMore (guest, data) { // {{{1
-  console.log('- markMore guest', guest, 'data', data)
-  if (google) {
+  console.log('- markMore guest', guest, 'guests.myId', guests.myId)
+
+  if (guests.myId) {
     return markGuest(guest);
   }
   let wait = new Promise((g, b) => { guests.ok = g; guests.notok = b; })
@@ -26,11 +28,13 @@ function markMore (guest, data) { // {{{1
 }
 
 function markup (data) { // {{{1
+  console.log('- markup data.length', data.length)
+
   let actor = JSON.parse(data.shift())
   if (actor.length > 2) { // actor is guest
     return markMore(actor, data);
   }
-  console.log('- markup agent', actor, 'data', data)
+  console.log('- markup agent', actor)
 
   let wait = new Promise((g, b) => { ok = g; notok = b; })
   wait.then(guestId => {
@@ -41,6 +45,8 @@ function markup (data) { // {{{1
 }
 
 function setup (center, guestId) { // {{{1
+  console.log('- setup center', center, 'guestId', guestId)
+
   const loader = new Loader({ apiKey, version: "weekly", });
   const mapOptions = {
     center,
