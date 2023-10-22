@@ -12,7 +12,7 @@ window.addEventListener('message', e => { // {{{1
   log(`e.origin ${e.origin}, e.data ${e.data}, queue.length ${queue.length}`)
   boundOrigin = e.origin
   if (bound) {
-    queue.forEach(e => bound.postMessage(e, boundOrigin))
+    bound.postMessage(queue, boundOrigin)
   } else {
     queue.push(e.data)
   }
@@ -51,14 +51,13 @@ async function loop () { // {{{1
         bound = window.open('BOUND', '_blank')
         let guestId = m.data.split(' ')[2]
         queue[0].push(+guestId)
-        console.log(queue)
         ws.send(JSON.stringify(queue[0]))
         return;
       }
       let jsoa
       try {
         jsoa = JSON.parse(m.data)
-        bound?.postMessage(jsoa, boundOrigin)
+        bound?.postMessage([jsoa], boundOrigin)
       } catch(e) {}
       !bound && jsoa && queue.push(jsoa) && console.log('queue', queue)
     } // }}}2
