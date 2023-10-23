@@ -34,12 +34,17 @@ function markup (data) { // {{{1
   if (actor.length > 2) { // actor is guest
     return markMore(actor, data);
   }
+  data.pop() // removing the empty line
   console.log('- markup agent', actor)
 
   let wait = new Promise((g, b) => { ok = g; notok = b; })
   wait.then(guestId => {
     guests.myId = guestId
     mark({ lat: actor[0], lng: actor[1] }, 'agent', 'Undisclosed location')
+    data.forEach(s => {
+      let g = JSON.parse(s)
+      mark({ lat: g[0], lng: g[1] }, 'guest', 'Visited on ' + new Date(g[2]))
+    })
     guests.ok && guests.ok()
   }).catch(e => console.error(e))
 }
