@@ -5,9 +5,10 @@ let GUEST_USE_SVC_URL = 'GUEST'
 let latitude = XXX, longitude = XXX, bound, boundOrigin
 
 window.addEventListener('message', e => { // {{{1
-  console.log(`e.origin ${e.origin}, e.data ${e.data}`)
+  console.log(e.origin)
+  console.log(e.data)
   boundOrigin ??= e.origin
-  bound.postMessage([latitude, longitude], e.origin)
+  bound?.postMessage([latitude, longitude], e.origin)
 })
 
 console.log('GUEST_USE_SVC_URL length', GUEST_USE_SVC_URL.length) // {{{1

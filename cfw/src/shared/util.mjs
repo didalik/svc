@@ -1,7 +1,9 @@
 import { Loader } from '@googlemaps/js-api-loader' // {{{1
 import { apiKey, } from '../../../../../../../../../env.mjs'
 
-let google, map, ok, notok, guests = { add: [] } // {{{1
+let google, map, ok, notok, guests = { add: [] }, myId // {{{1
+let wait4setup = new Promise((g, b) => { ok = g; notok = b; })
+let wait4markup = new Promise((g, b) => { guests.ok = g; guests.notok = b; })
 
 function mark (position, title, content) { // {{{1
   const marker = new google.maps.Marker({ map, position, title, })
@@ -13,18 +15,24 @@ function markGuest (guest) { // {{{1
   if (guest[2] == guests.myId) {
     mark({ lat: guest[0], lng: guest[1] }, 'me', 'You are here.')
   } else {
-    mark({ lat: guest[0]-1, lng: guest[1]-1 }, 'guest', 'Visited on ' + new Date(guest[2]))
+    mark({ lat: guest[0], lng: guest[1] }, 'guest', 'Visited on ' + new Date(guest[2]))
   }
+}
+
+function markHistory (agent, data) { // {{{1
+  guests.myId = myId
+  mark({ lat: agent[0], lng: agent[1] }, 'agent', 'Undisclosed location')
+  data.forEach(s => {
+    let g = JSON.parse(s)
+    mark({ lat: g[0], lng: g[1] }, 'guest', 'Visited on ' + new Date(g[2]))
+  })
+  guests.ok()
 }
 
 function markMore (guest, data) { // {{{1
   console.log('- markMore guest', guest, 'guests.myId', guests.myId)
 
-  if (guests.myId) {
-    return markGuest(guest);
-  }
-  let wait = new Promise((g, b) => { guests.ok = g; guests.notok = b; })
-  wait.then(_ => markGuest(guest)).catch(e => console.error(e))
+  wait4markup.then(_ => markGuest(guest)).catch(e => console.error(e))
 }
 
 function markup (data) { // {{{1
@@ -37,16 +45,7 @@ function markup (data) { // {{{1
   data.pop() // removing the empty line
   console.log('- markup agent', actor)
 
-  let wait = new Promise((g, b) => { ok = g; notok = b; })
-  wait.then(guestId => {
-    guests.myId = guestId
-    mark({ lat: actor[0], lng: actor[1] }, 'agent', 'Undisclosed location')
-    data.forEach(s => {
-      let g = JSON.parse(s)
-      mark({ lat: g[0], lng: g[1] }, 'guest', 'Visited on ' + new Date(g[2]))
-    })
-    guests.ok && guests.ok()
-  }).catch(e => console.error(e))
+  wait4setup.then(_ => markHistory(actor, data)).catch(e => console.error(e))
 }
 
 function setup (center, guestId) { // {{{1
@@ -61,7 +60,7 @@ function setup (center, guestId) { // {{{1
     zoom: 5
   };
   loader.load().then(g => {
-    google = g; ok(guestId)
+    google = g; myId = guestId; ok()
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
     // Define OSM map type pointing at the OpenStreetMap tile server

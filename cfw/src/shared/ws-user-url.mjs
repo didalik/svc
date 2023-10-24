@@ -1,4 +1,4 @@
-let ws, bound, boundOrigin, queue = [] // {{{1
+let ws, users, usersOrigin, queue = [] // {{{1
 let buttonStop = document.getElementById('stop')
 let now = Date.now(), p, goon = true
 
@@ -10,12 +10,10 @@ buttonStop.onclick = _ => {
 }
 window.addEventListener('message', e => { // {{{1
   log(`e.origin ${e.origin}, e.data ${e.data}, queue.length ${queue.length}`)
-  boundOrigin = e.origin
-  if (bound) {
-    bound.postMessage(queue, boundOrigin)
-  } else {
-    queue.push(e.data)
+  if (typeof e.data == 'string') {
+    usersOrigin = e.origin
   }
+  usersOrigin && users.postMessage(queue, usersOrigin) || queue.push(e.data)
 })
 window.opener.postMessage('ws-user-url started', window.opener.location) // }}}1
 
@@ -47,19 +45,22 @@ async function loop () { // {{{1
     ws.onmessage = m => { // {{{2
       log(m.data)
       m.data == '{"signal":"unbound"}' && buttonStop.click()
+      if (m.data.indexOf('binding') > 0) {
+        return;
+      }
       if (m.data.indexOf(' bound ') > 0) {
-        bound = window.open('BOUND', '_blank')
+        users = window.open('BOUND', '_blank')
         let guestId = m.data.split(' ')[2]
         queue[0].push(+guestId)
         ws.send(JSON.stringify(queue[0]))
+        console.log('sent', queue[0], 'users', users)
         return;
       }
       let jsoa
       try {
         jsoa = JSON.parse(m.data)
-        bound?.postMessage([jsoa], boundOrigin)
-      } catch(e) {}
-      !bound && jsoa && queue.push(jsoa) && console.log('queue', queue)
+        usersOrigin && users.postMessage([jsoa], usersOrigin) || queue.push(jsoa)
+      } catch(e) { console.log(e, jsoa, m.data) }
     } // }}}2
     await promise.catch(e => console.error(e))
   }
