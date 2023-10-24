@@ -1,4 +1,12 @@
-# Shared services of [the Org](https://github.com/didalik/role-based-org/blob/main/README.md)
+# Securely Shared Cloud-Based Services
+
+The idea behind this project is simple. A _Service Owner_ creates and shares a service in the cloud. A _Service Agent_ has resources to run the service and is authorized by the Owner to offer the service to _Service User_s. Each User is authorized by an Agent to use the service. The Owner can have both Agent and User roles. An Agent can also have a User role.
+
+# The Example
+
+A guest User is created when someone hits the site. Guest Users don't persist.
+
+# Old Stuff: Shared services of [the Org](https://github.com/didalik/role-based-org/blob/main/README.md)
 
 ![TheOrg.jpg](TheOrg.jpg)
 
