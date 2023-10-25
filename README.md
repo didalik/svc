@@ -1,10 +1,12 @@
 # Securely Shared Cloud-Based Services
 
-The idea behind this project is simple. A _Service Owner_ creates and shares a service in the cloud. A _Service Agent_ has resources to run the service and is authorized by the Owner to offer the service to _Service User_s. Each User is authorized by an Agent to use the service. The Owner can have both Agent and User roles. An Agent can also have a User role.
+The idea behind this project is simple. A _Service Owner_ creates and shares a service in the cloud. A _Service Agent_ has resources to run the service and is authorized by the Owner to offer the service to _Service Users_. Each User is authorized by an Agent to use the service. The Owner can have both Agent and User roles. An Agent can also have a User role.
+
+To use the service, the User waits to bind to a first available Agent. Having bound, the User consumes the service from the Agent.
 
 # The Example
 
-A guest User is created when someone hits the site. Guest Users don't persist.
+A guest User is created when someone hits the site. Guest Users don't persist. The Agent here is readily available for a guest, so that guests do not have to wait to bind. The Agent can be bound to multiple guests. The Agent keeps the history of hits for this site. When a guest binds to the Agent, the Agent sends the history to the guest and receives the guest's geolocation. Then the Agent shares this geolocation with all currently bound guests and adds is to the history. The history is being stored on the Agent's host.
 
 # Old Stuff: Shared services of [the Org](https://github.com/didalik/role-based-org/blob/main/README.md)
 
