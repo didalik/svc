@@ -1,3 +1,6 @@
-# Vim
+# Node {{{1
+node_modules
+
+# Vim {{{1
 .*.sw?
 *.session
