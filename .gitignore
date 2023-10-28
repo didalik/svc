@@ -1,6 +1,11 @@
 # Node {{{1
 node_modules
 
+# QA {{{1
+cfw/src/shared/user-url.html
+cfw/src/shared/welcome.html
+cfw/src/shared/ws-user-url.html
+
 # Vim {{{1
 .*.sw?
 *.session
