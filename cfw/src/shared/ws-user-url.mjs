@@ -28,7 +28,7 @@ async function loop () { // {{{1
       console.error(e)
     }
     ws.onclose = a => { // { isTrusted: true } {{{2
-      log(`disconnected typeof a ${typeof a} a?.isTrusted ${a?.isTrusted}`)
+      log('ws.onclose: disconnected')
       if (typeof a == 'object') {
         goon = false
         buttonStop.disabled = true
@@ -45,7 +45,7 @@ async function loop () { // {{{1
     ws.onmessage = m => { // {{{2
       log(m.data)
       m.data == '{"signal":"unbound"}' && buttonStop.click()
-      if (m.data.indexOf('binding') > 0) {
+      if (m.data.indexOf('binding') > 0 || m.data.indexOf('disconnected') > 0) {
         return;
       }
       if (m.data.indexOf(' bound ') > 0) {
