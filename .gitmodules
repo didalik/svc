@@ -1,3 +1,4 @@
 [submodule "bash-tpl"]
 	path = bash-tpl
 	url = https://github.com/TekWizely/bash-tpl
+	branch = main
