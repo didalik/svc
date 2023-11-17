@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head> <!-- {{{1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+  <body> <!-- {{{1 -->
+Service <b>DEMO</b>: user BOUND <hr> <button id='stop'>Stop</button>
+<samp><p id='log'>- starting...<br/></p></samp>
+  </body>
+<script type="text/javascript">
