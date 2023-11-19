@@ -1,6 +1,4 @@
-import { markup, setup, } from './util.mjs' // {{{1
-
-//let guestId = +window.location.pathname.split('/')[3]
+import { flag, markup, setup, } from './util.mjs' // {{{1
 
 window.addEventListener('message', e => { // {{{1
   console.log(e.data)
@@ -12,6 +10,4 @@ window.addEventListener('message', e => { // {{{1
     }
   }
 })
-//window.opener.postMessage('user-url started, guestId ' + guestId, window.opener.location)
-
-setup({ lat: LATITUDE, lng: LONGITUDE }, GUEST_ID)
+setup({ lat: LATITUDE, lng: LONGITUDE }, GUEST_ID).then(a => flag(a))

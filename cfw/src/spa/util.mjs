@@ -5,6 +5,59 @@ let google, map, ok, notok, guests = { add: [] }, myId // {{{1
 let wait4setup = new Promise((g, b) => { ok = g; notok = b; })
 let wait4markup = new Promise((g, b) => { guests.ok = g; guests.notok = b; })
 
+class Popup { // {{{1
+  constructor(position, content) {
+    this.position = position;
+    content.classList.add("popup-bubble");
+
+    // This zero-height div is positioned at the bottom of the bubble.
+    const bubbleAnchor = document.createElement("div");
+
+    bubbleAnchor.classList.add("popup-bubble-anchor");
+    bubbleAnchor.appendChild(content);
+    // This zero-height div is positioned at the bottom of the tip.
+    this.containerDiv = document.createElement("div");
+    this.containerDiv.classList.add("popup-container");
+    this.containerDiv.appendChild(bubbleAnchor);
+    // Optionally stop clicks, etc., from bubbling up to the map.
+    google.maps.OverlayView.preventMapHitsAndGesturesFrom(this.containerDiv);
+    let ov = new google.maps.OverlayView(); this.ov = ov
+    ov.onAdd = _ => {
+      ov.getPanes().overlayMouseTarget.appendChild(this.containerDiv)
+    }
+    ov.onRemove = _ => {
+      if (this.containerDiv.parentElement) {
+        this.containerDiv.parentElement.removeChild(this.containerDiv);
+      }
+    }
+    ov.draw = _ => {
+      const divPosition = this.ov.getProjection().fromLatLngToDivPixel(
+        this.position
+      );
+      // Hide the popup when it is far out of view.
+      const display =
+        Math.abs(divPosition.x) < 4000 && Math.abs(divPosition.y) < 4000
+          ? "block"
+          : "none";
+
+      if (display === "block") {
+        this.containerDiv.style.left = divPosition.x + "px";
+        this.containerDiv.style.top = divPosition.y + "px";
+      }
+      if (this.containerDiv.style.display !== display) {
+        this.containerDiv.style.display = display;
+      }
+    }
+  }
+}
+
+function flag (position) { // {{{1
+  let p = new google.maps.LatLng(position.lat, position.lng)
+  let popup = new Popup(p, document.getElementById('user2join'))
+  popup.ov.setMap(map)
+  //popup.containerDiv.addEventListener('click', e => showModal('getUserInfo'))
+}
+
 function mark (position, title, content) { // {{{1
   const marker = new google.maps.Marker({ map, position, title, })
   const infowindow = new google.maps.InfoWindow({ content })
@@ -59,7 +112,7 @@ function setup (center, guestId) { // {{{1
     streetViewControl: false,
     zoom: 5
   };
-  loader.load().then(g => {
+  return loader.load().then(g => {
     google = g; myId = guestId; ok()
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
@@ -72,6 +125,7 @@ function setup (center, guestId) { // {{{1
       name: "OpenStreetMap",
       maxZoom: 18
     }))
+    return center;
   }).catch(e => { console.error(e); });
 }
 
@@ -80,5 +134,5 @@ function teardown () { // {{{1
 }
 
 export { // {{{1
-  markup, setup, teardown,
+  flag, markup, setup, teardown,
 }
