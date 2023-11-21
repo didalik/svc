@@ -22,14 +22,8 @@ class Popup { // {{{1
     // Optionally stop clicks, etc., from bubbling up to the map.
     google.maps.OverlayView.preventMapHitsAndGesturesFrom(this.containerDiv);
     let ov = new google.maps.OverlayView(); this.ov = ov
-    ov.onAdd = _ => {
-      ov.getPanes().overlayMouseTarget.appendChild(this.containerDiv)
-    }
-    ov.onRemove = _ => {
-      if (this.containerDiv.parentElement) {
-        this.containerDiv.parentElement.removeChild(this.containerDiv);
-      }
-    }
+    ov.onAdd = _ => ov.getPanes().overlayMouseTarget.appendChild(this.containerDiv)
+    ov.onRemove = _ => this.containerDiv?.parentElement.removeChild(this.containerDiv)
     ov.draw = _ => {
       const divPosition = this.ov.getProjection().fromLatLngToDivPixel(
         this.position
@@ -49,6 +43,38 @@ class Popup { // {{{1
       }
     }
   }
+}
+
+class User { // {{{1
+  constructor (data) { // {{{2
+    Object.assign(this, data)
+  }
+  bindToAgent (svc) { // {{{2
+    this.svc = svc
+    return fetch(this.guestUseSvcUrl, { method: 'GET', }).then(async response => {
+      let text
+      if (response.ok) {
+        text = await response.text()
+        console.log('- user.bindToAgent guestUseSvcUrl fetch text', text)
+
+        return Promise.resolve(this);
+      }
+      try {
+        text = await response.text()
+      } catch(e) {
+        console.error(e)
+        throw new Error(response.status)
+      }
+      console.error('- pGET ERROR', response.status, text)
+      throw new Error(response.status)
+    });
+  }
+  // }}}2
+}
+
+function configure (user) { // {{{1
+  setup(user.position, user.guestId).then(a => flag(a))
+  return Promise.resolve(new User(user));
 }
 
 function flag (position) { // {{{1
@@ -134,5 +160,5 @@ function teardown () { // {{{1
 }
 
 export { // {{{1
-  flag, markup, setup, teardown,
+  configure,
 }

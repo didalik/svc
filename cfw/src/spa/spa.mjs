@@ -1,13 +1,19 @@
-import { flag, markup, setup, } from './util.mjs' // {{{1
+import { configure, } from './util.mjs' // {{{1
 
-window.addEventListener('message', e => { // {{{1
-  console.log(e.data)
-  for (let a of e.data) {
-    if (typeof a[0] == 'string') {
-      markup(a)
-    } else if (typeof a[0] == 'number') {
-      setup({ lat: a[0], lng: a[1] }, guestId)
-    }
-  }
-})
-setup({ lat: LATITUDE, lng: LONGITUDE }, GUEST_ID).then(a => flag(a))
+let service = {
+  description: 'An s2cb service example',
+  svcName: 'SVC_NAME',
+  svcPK: 'SVC_PK',
+}
+let user = {
+  guestId: GUEST_ID,
+  guestUseSvcUrl: 'GUEST_USE_SVC_URL',
+  position: { lat: LATITUDE, lng: LONGITUDE },
+}
+//let url = new URL(user.guestUseSvcUrl)
+//let WS_USER_URL = decodeURIComponent(url.searchParams.get('WS_USER_URL'))
+
+configure(user).then(user => user.bindToAgent(service)).
+  then(user => user.use(service)).
+  then(user => user.close()).
+  catch(e => console.error(e))
