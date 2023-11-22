@@ -1,5 +1,6 @@
 import { Loader } from '@googlemaps/js-api-loader' // {{{1
 import { apiKey, } from '../../../../../../../../../env.mjs'
+import { WsConnection, } from './ws.mjs'
 
 let google, map, ok, notok, guests = { add: [] }, myId // {{{1
 let wait4setup = new Promise((g, b) => { ok = g; notok = b; })
@@ -51,13 +52,15 @@ class User { // {{{1
   }
   bindToAgent (svc) { // {{{2
     this.svc = svc
+    let promise = new Promise((g, b) => { this.bound = g; this.notok = b; })
     return fetch(this.guestUseSvcUrl, { method: 'GET', }).then(async response => {
       let text
       if (response.ok) {
-        text = await response.text()
-        console.log('- user.bindToAgent guestUseSvcUrl fetch text', text)
+        text = await response.text() // 'OK'
+        this.wsConnection?.isOn || new WsConnection(this)
+        console.log('- user.bindToAgent guestUseSvcUrl fetch this', this)
 
-        return Promise.resolve(this);
+        return promise;
       }
       try {
         text = await response.text()
@@ -68,6 +71,15 @@ class User { // {{{1
       console.error('- pGET ERROR', response.status, text)
       throw new Error(response.status)
     });
+  }
+  boundToAgent (agentId) { // {{{2
+    console.log('- user.boundToAgent agentId', agentId)
+
+    this.bound(this)
+  }
+  use (svc) { // {{{2 
+    console.log('- user.use svc', svc)
+
   }
   // }}}2
 }

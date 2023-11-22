@@ -9,9 +9,8 @@ let user = {
   guestId: GUEST_ID,
   guestUseSvcUrl: 'GUEST_USE_SVC_URL',
   position: { lat: LATITUDE, lng: LONGITUDE },
+  wsUserURL: 'WS_USER_URL',
 }
-//let url = new URL(user.guestUseSvcUrl)
-//let WS_USER_URL = decodeURIComponent(url.searchParams.get('WS_USER_URL'))
 
 configure(user).then(user => user.bindToAgent(service)).
   then(user => user.use(service)).
