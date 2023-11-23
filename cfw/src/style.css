@@ -23,15 +23,32 @@ body {
   left: 0;
   transform: translate(-50%, -100%);
   /* Style the bubble. */
-  background-color: white;
+  background-color: rgba(255,255,255,0.6);
   width: 195px;
   padding: 5px;
   border-radius: 5px;
   font-family: sans-serif;
-  font-size: 15px; /* TODO make it work */
+  font-size: 15px;
   overflow-y: auto;
   max-height: 150px;
-  cursor: pointer;
+  cursor: auto;
+  box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
+}
+
+.popup-radios {
+  position: absolute;
+  top: 160px;
+  left: 0;
+  transform: translate(-50%, -100%);
+  background-color: rgba(255,255,255,0.6);
+  width: 300px;
+  padding: 5px;
+  border-radius: 5px;
+  font-family: sans-serif;
+  font-size: 15px;
+  overflow-y: auto;
+  cursor: auto;
+  display: none;
   box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
 }
 
@@ -74,7 +91,7 @@ body {
   background: #ebebeb;
 }
 
-/* Tooltip container */
+/* Tooltip container {{{1 */
 .tooltip {
   position: relative;
   display: inline-block;

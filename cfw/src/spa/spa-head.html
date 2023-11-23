@@ -8,8 +8,21 @@
   </head>
   <body> <!-- {{{1 -->
     <div tabindex="800" id="map"></div>
-    <div id="user2join"> <!-- {{{2 -->
+    <div id="center-bubble"> <!-- {{{2 -->
       <span><a href='https://www.cloudflare.com'><b>Cloudflare</b></a> says you're here.</span>
+    </div>
+    <div id="center-radios"> <!-- {{{2 -->
+      <fieldset>
+        <legend>You can now watch:</legend>
+        <div>
+          <input type="radio" name='watch' id='center-radio-users' style='cursor:pointer'/>
+          <label for='center-radio-users'>other users of the service</label>
+        </div>
+        <div>
+          <input type="radio" name='watch' id='center-radio-hackers' style='cursor:pointer'/>
+          <label for='center-radio-hackers'>hackers trying to break the service</label>
+        </div>
+      </fieldset>
     </div> <!-- }}}2 -->
   </body> <!-- }}}1 -->
 <script type="text/javascript">

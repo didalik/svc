@@ -7,15 +7,17 @@ let wait4setup = new Promise((g, b) => { ok = g; notok = b; })
 let wait4markup = new Promise((g, b) => { guests.ok = g; guests.notok = b; })
 
 class Popup { // {{{1
-  constructor(position, content) {
+  constructor(position, bubble, radios) {
     this.position = position;
-    content.classList.add("popup-bubble");
+    bubble.classList.add("popup-bubble");
+    radios.classList.add("popup-radios");
 
     // This zero-height div is positioned at the bottom of the bubble.
     const bubbleAnchor = document.createElement("div");
 
     bubbleAnchor.classList.add("popup-bubble-anchor");
-    bubbleAnchor.appendChild(content);
+    bubbleAnchor.appendChild(bubble);
+    bubbleAnchor.appendChild(radios);
     // This zero-height div is positioned at the bottom of the tip.
     this.containerDiv = document.createElement("div");
     this.containerDiv.classList.add("popup-container");
@@ -77,9 +79,14 @@ class User { // {{{1
 
     this.bound(this)
   }
-  use (svc) { // {{{2 
-    console.log('- user.use svc', svc)
-
+  use (svc) { // {{{2
+    document.getElementById('center-radios').style.display = 'block'
+    document.getElementById('center-radio-users').onclick = _ => {
+      console.log('- user.use svc watch users')
+    }
+    document.getElementById('center-radio-hackers').onclick = _ => {
+      console.log('- user.use svc watch hackers')
+    }
   }
   // }}}2
 }
@@ -91,7 +98,9 @@ function configure (user) { // {{{1
 
 function flag (position) { // {{{1
   let p = new google.maps.LatLng(position.lat, position.lng)
-  let popup = new Popup(p, document.getElementById('user2join'))
+  let popup = new Popup(p, document.getElementById('center-bubble'),
+    document.getElementById('center-radios')
+  )
   popup.ov.setMap(map)
   //popup.containerDiv.addEventListener('click', e => showModal('getUserInfo'))
 }
