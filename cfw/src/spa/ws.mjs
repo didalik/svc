@@ -12,6 +12,7 @@ class WsConnection {
         console.log('ws.onclose: disconnected')
         if (typeof a == 'object') {
           this.isOn = false
+          this.user.closing(this.user)
           ok()
         }
         this.isOn && setTimeout(_ => {

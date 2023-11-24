@@ -80,6 +80,7 @@ class User { // {{{1
     this.bound(this)
   }
   use (svc) { // {{{2
+    let promise = new Promise((g, b) => { this.closing = g; this.notok = b; })
     document.getElementById('center-radios').style.display = 'block'
     document.getElementById('center-radio-users').onclick = _ => {
       console.log('- user.use svc watch users')
@@ -87,6 +88,13 @@ class User { // {{{1
     document.getElementById('center-radio-hackers').onclick = _ => {
       console.log('- user.use svc watch hackers')
     }
+    document.getElementById('center-radio-more').onclick = _ => {
+      window.open('https://github.com/didalik/svc/#readme', '_blank')
+    }
+    return promise;
+  }
+  close () { // {{{2
+    console.log('- user.close')
   }
   // }}}2
 }
