@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 teardown () {
   kill $PID_OF_TAIL
 }

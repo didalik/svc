@@ -110,7 +110,6 @@ function flag (position) { // {{{1
     document.getElementById('center-radios')
   )
   popup.ov.setMap(map)
-  //popup.containerDiv.addEventListener('click', e => showModal('getUserInfo'))
 }
 
 function mark (position, title, content) { // {{{1
