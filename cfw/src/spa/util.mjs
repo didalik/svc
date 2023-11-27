@@ -85,9 +85,11 @@ class User { // {{{1
     document.getElementById('center-radio-users').onclick = _ => {
       console.log('- user.use svc watch users')
     }
+    /*
     document.getElementById('center-radio-hackers').onclick = _ => {
       console.log('- user.use svc watch hackers')
     }
+    */
     document.getElementById('center-radio-more').onclick = _ => {
       window.open('https://github.com/didalik/svc/#readme', '_blank')
     }
