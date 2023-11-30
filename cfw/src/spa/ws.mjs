@@ -3,7 +3,7 @@ class WsConnection {
     this.isOn = true
     while (this.isOn) {
       let ok, notok, promise = new Promise((g, b) => { ok = g; notok = b; })
-      let ws = new WebSocket(this.user.wsUserURL)
+      let ws = new WebSocket(this.user.wsUserURL); this.ws = ws
       ws.onerror = e => {
         notok(e)
         console.error(e)
@@ -35,6 +35,7 @@ class WsConnection {
         let jsoa
         try {
           jsoa = JSON.parse(m.data)
+          this.user[this.onJsoa](jsoa)
         } catch(e) { console.log(e, jsoa, m.data) }
       }
       await promise.catch(e => console.error(e))
@@ -45,6 +46,13 @@ class WsConnection {
     this.user = user
     user.wsConnection = this
     this.#loop()
+  }
+
+  send (data) { // {{{1
+    if (typeof data == 'object') {
+        data = JSON.stringify(data)
+    }
+    this.ws.send(data)
   } // }}}1
 }
 

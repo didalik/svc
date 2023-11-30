@@ -83,7 +83,9 @@ class User { // {{{1
     let promise = new Promise((g, b) => { this.closing = g; this.notok = b; })
     document.getElementById('center-radios').style.display = 'block'
     document.getElementById('center-radio-users').onclick = _ => {
-      console.log('- user.use svc watch users')
+      console.log('- user.use svc watch guests')
+      this.wsConnection.send({ request: 'guests', })
+      this.wsConnection.onJsoa = 'watchGuests'
     }
     /*
     document.getElementById('center-radio-hackers').onclick = _ => {
@@ -95,6 +97,17 @@ class User { // {{{1
     }
     return promise;
   }
+
+  watchGuests (jsoa) { // {{{2
+    console.log('- user.watchGuests jsoa', jsoa)
+    document.getElementById('center-radios').parentElement.style.display = 'none'
+    jsoa.forEach(s => mark(
+      { lat: s[1], lng: s[2] }, 
+      'guest', 
+      'Visited on ' + new Date(s[0])
+    ))
+  }
+
   close () { // {{{2
     console.log('- user.close')
   }
