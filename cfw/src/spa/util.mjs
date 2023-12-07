@@ -101,7 +101,7 @@ class User { // {{{1
   }
 
   watchGuests (jsoa) { // {{{2
-    console.log('- user.watchGuests jsoa', jsoa)
+    console.log('- user.watchGuests jsoa.length', jsoa.length)
     document.getElementById('center-radios').parentElement.style.display = 'none'
     jsoa.forEach(s => mark(
       { lat: s[1], lng: s[2] }, 
@@ -111,7 +111,17 @@ class User { // {{{1
   }
 
   watchHackers (jsoa) { // {{{2
-    console.log('- user.watchHackers jsoa', jsoa)
+    console.log('- user.watchHackers jsoa.length', jsoa.length)
+    document.getElementById('center-radios').parentElement.style.display = 'none'
+    jsoa.forEach(s => {
+      s = JSON.parse(s)
+      //console.log('- user.watchHackers s', s)
+      mark(
+        { lat: s[1][0], lng: s[1][1] },
+        s[0][1],
+        'Hit on ' + s[0][0]
+      )
+    })
   }
 
   close () { // {{{2
@@ -185,7 +195,7 @@ function setup (center, guestId) { // {{{1
     mapTypeId: "OSM",
     mapTypeControl: false,
     streetViewControl: false,
-    zoom: 5
+    zoom: 2
   };
   return loader.load().then(g => {
     google = g; myId = guestId; ok()
