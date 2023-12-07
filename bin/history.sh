@@ -6,7 +6,7 @@ teardown () {
 
 trap teardown EXIT
 
-tail -f history.log &
+tail -n 999999 -f history.log &
 PID_OF_TAIL=$!
 cat >> history.log
 

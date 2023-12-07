@@ -87,10 +87,12 @@ class User { // {{{1
       this.wsConnection.send({ request: 'guests', })
       this.wsConnection.onJsoa = 'watchGuests'
     }
-    /*
     document.getElementById('center-radio-hackers').onclick = _ => {
       console.log('- user.use svc watch hackers')
+      this.wsConnection.send({ request: 'hackers', })
+      this.wsConnection.onJsoa = 'watchHackers'
     }
+    /*
     */
     document.getElementById('center-radio-more').onclick = _ => {
       window.open('https://github.com/didalik/svc/#readme', '_blank')
@@ -106,6 +108,10 @@ class User { // {{{1
       'guest', 
       'Visited on ' + new Date(s[0])
     ))
+  }
+
+  watchHackers (jsoa) { // {{{2
+    console.log('- user.watchHackers jsoa', jsoa)
   }
 
   close () { // {{{2
