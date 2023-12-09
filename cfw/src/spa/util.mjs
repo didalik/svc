@@ -113,14 +113,11 @@ class User { // {{{1
   watchHackers (jsoa) { // {{{2
     console.log('- user.watchHackers jsoa.length', jsoa.length)
     document.getElementById('center-radios').parentElement.style.display = 'none'
-    jsoa.forEach(s => {
+    jsoa.forEach((s, i) => {
       s = JSON.parse(s)
-      //console.log('- user.watchHackers s', s)
-      mark(
-        { lat: s[1][0], lng: s[1][1] },
-        s[0][1],
-        'Hit on ' + s[0][0]
-      )
+      //console.log('- user.watchHackers i', i, 's', s)
+      let e = s[0].split(' ')
+      mark({ lat: s[1][0], lng: s[1][1] }, e[1], 'Hit on ' + e[0])
     })
   }
 
