@@ -24,7 +24,7 @@ class WsConnection {
         console.log('connected')
       }
       ws.onmessage = m => {
-        //console.log(m.data)
+        console.log(m.data)
         if (m.data.indexOf('binding') > 0 || m.data.indexOf('disconnected') > 0) {
           return;
         }
