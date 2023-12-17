@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Copyright (c) 2023-present, Дід Alik and the Kids {{{1
+#
+# This script is licensed under the Apache License, Version 2.0, found in the
+# LICENSE file in the root directory of this source tree.
+##
 
 function cc () { # clone our repo, checkout its main branch {{{1
   local repo_url=$1
