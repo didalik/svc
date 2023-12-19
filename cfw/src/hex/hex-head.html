@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head> <!-- {{{1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>An s2cb service example</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body> <!-- {{{1 -->
+    <div tabindex="800" id="map"></div>
+    <div id="center-bubble"> <!-- {{{2 -->
+      <a href='https://www.cloudflare.com' target='_blank'><b>Cloudflare</b></a> says you're here.
+    </div>
+    <div id="center-radios"> <!-- {{{2 -->
+      <fieldset>
+        <legend>You can now observe:</legend>
+        <div>
+          <input type="radio" name='watch' id='center-radio-users' style='cursor:pointer'/>
+          <label for='center-radio-users'>all users of the service</label>
+        </div>
+        <div>
+          <input type="radio" name='watch' id='center-radio-hackers' style='cursor:pointer'/>
+          <label for='center-radio-hackers'>hackers trying to break the service</label>
+        </div>
+        <!--
+        -->
+        <div>
+          <input type="radio" name='watch' id='center-radio-more' style='cursor:pointer'/>
+          <label for='center-radio-more'>more info</label>
+        </div>
+      </fieldset>
+    </div> <!-- }}}2 -->
+  </body> <!-- }}}1 -->
+<script type="text/javascript">
