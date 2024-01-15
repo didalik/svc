@@ -16,7 +16,7 @@ function cc () { # clone our repo, checkout its main branch {{{1
 function start_local_dev () { # for svc $1, log to $LOCALDEV_LOG, $! >> .pids2kill {{{1
   local svc_name=$1
   local svc_count=$2
-  local svc_dir=../../../svc/${svc_name}
+  local svc_dir=$DAK_HOME/svc/${svc_name}
   local dev_fifo=${svc_dir}/dev.fifo
   local dev_script=${svc_dir}/${svc_name}-dev.sh
   local grep_pattern='wrangler-dist/cli.js dev'
