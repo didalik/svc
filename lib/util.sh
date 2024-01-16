@@ -21,17 +21,15 @@ function start_local_dev () { # for svc $1, log to $LOCALDEV_LOG, $! >> .pids2ki
   local dev_script=${svc_dir}/${svc_name}-dev.sh
   local grep_pattern='wrangler-dist/cli.js dev'
 
-  echo "- $0 checking local svc ${svc_name}..." >> $LOCALDEV_LOG
+  echo "- $0 checking local svc ${svc_name}!.." >> $LOCALDEV_LOG
   if [ $(ps -ef|grep "${svc_name}-dev.sh"|wc -l) -eq 1 ]; then
     echo "- $0 starting local svc ${svc_name}..." >> $LOCALDEV_LOG
     $dev_script >> $LOCALDEV_LOG &
     echo $! >> .pids2kill
     echo $svc_name > $dev_fifo
-    while [ $(ps -ef|grep "$grep_pattern"|wc -l) -lt $svc_count ]; do
-      echo -e "\t- $dev_script starting wrangler dev..." >> $LOCALDEV_LOG
-      sleep 1
+    tail -f $LOCALDEV_LOG | while read; do
+      [[ "$REPLY" == *Ready\ on\ http://127.0.0.1:* ]] && break
     done
-    sleep 1
   fi
   echo "- $0 local svc ${svc_name} is ON." >> $LOCALDEV_LOG
 }
@@ -50,3 +48,8 @@ USAGE
 }
 
 (return 0 2> /dev/null) || usage
+
+# Thanks to: {{{1
+# - https://stackoverflow.com/questions/17420994/how-can-i-match-a-string-with-a-regex-in-bash
+#
+##
