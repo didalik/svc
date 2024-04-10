@@ -1,7 +1,8 @@
 import { configure, } from './util.mjs' // {{{1
+import { startDemo, } from './poc.mjs'
 
 let service = {
-  description: 'An s2cb service example',
+  description: 'Stellar Help Exchange',
   svcName: 'SVC_NAME',
   svcPK: 'SVC_PK',
 }
@@ -11,8 +12,15 @@ let user = {
   position: { lat: LATITUDE, lng: LONGITUDE },
   wsUserURL: 'WS_USER_URL',
 }
+let vm = { s: [], e: { log: console.log }, c: {}, d: {} }
 
-configure(user).then(user => user.bindToAgent(service)).
+document.getElementById('center-bubble').style.display = 'none'
+document.getElementById('center-radios').style.display = 'block'
+
+configure(user) /*.then(user => user.bindToAgent(service)).
   then(user => user.use(service)).
   then(user => user.close()).
   catch(e => console.error(e))
+  */
+startDemo.call(vm).then(_ => console.log(vm)).
+  catch(e => { throw e })
