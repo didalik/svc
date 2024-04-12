@@ -240,9 +240,9 @@ function parseHEXA (desc) { // {{{1
 
 function reclaim (creator, kp, balanceId) { // {{{1
   let { s, e, c, d } = this
-  return takeClaimableBalance.call(this, creator, kp, balanceId).then(r => e.log(
-    'reclaim', r
-  ));
+  return takeClaimableBalance.call(this, creator, kp, balanceId).then(
+    r => r && e.log('reclaim', r)
+  );
 }
 
 function repayOffer (taker, kp, amount, from, signDeal) { // {{{1

@@ -1,4 +1,4 @@
-import { configure, } from './util.mjs' // {{{1
+import { configure, watchMovie, } from './util.mjs' // {{{1
 import { startDemo, } from './poc.mjs'
 
 let service = {
@@ -12,15 +12,14 @@ let user = {
   position: { lat: LATITUDE, lng: LONGITUDE },
   wsUserURL: 'WS_USER_URL',
 }
-let vm = { s: [], e: { log: console.log }, c: {}, d: {} }
-
-document.getElementById('center-bubble').style.display = 'none'
-document.getElementById('center-radios').style.display = 'block'
+let vm = { s: [], e: { log: console.log }, c: { watchMovie }, d: {} }
+window.vm = vm
 
 configure(user) /*.then(user => user.bindToAgent(service)).
   then(user => user.use(service)).
   then(user => user.close()).
   catch(e => console.error(e))
   */
-startDemo.call(vm).then(_ => console.log(vm)).
-  catch(e => { throw e })
+//startDemo.call(vm).then(_ => console.log(vm)).
+//  catch(e => { throw e })
+

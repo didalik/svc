@@ -184,7 +184,7 @@ function markup (data) { // {{{1
 }
 
 function setup (center, guestId) { // {{{1
-  console.log('- setup center', center, 'guestId', guestId)
+  //console.log('- setup center', center, 'guestId', guestId)
 
   const loader = new Loader({ apiKey, version: "weekly", });
   const mapOptions = {
@@ -215,6 +215,10 @@ function teardown () { // {{{1
   alert('teardown')
 }
 
+function watchMovie () { // {{{1
+  console.log('watchMovie')
+}
+
 export { // {{{1
-  configure,
+  configure, watchMovie,
 }
