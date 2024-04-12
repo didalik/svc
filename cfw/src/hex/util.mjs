@@ -5,6 +5,7 @@ import { WsConnection, } from './ws.mjs'
 let google, map, ok, notok, guests = { add: [] }, myId // {{{1
 let wait4setup = new Promise((g, b) => { ok = g; notok = b; })
 let wait4markup = new Promise((g, b) => { guests.ok = g; guests.notok = b; })
+let mapTypeOSM
 
 class Popup { // {{{1
   constructor(position, bubble, radios) {
@@ -184,7 +185,7 @@ function markup (data) { // {{{1
 }
 
 function setup (center, guestId) { // {{{1
-  //console.log('- setup center', center, 'guestId', guestId)
+  console.log('- setup center', center, 'guestId', guestId)
 
   const loader = new Loader({ apiKey, version: "weekly", });
   const mapOptions = {
@@ -197,16 +198,17 @@ function setup (center, guestId) { // {{{1
   return loader.load().then(g => {
     google = g; myId = guestId; ok()
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-    // Define OSM map type pointing at the OpenStreetMap tile server
-    map.mapTypes.set("OSM", new google.maps.ImageMapType({
+    mapTypeOSM = new google.maps.ImageMapType({
       getTileUrl: function(coord, zoom) {
         return "https://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
       },
       tileSize: new google.maps.Size(256, 256),
       name: "OpenStreetMap",
       maxZoom: 18
-    }))
+    })
+
+    // Define OSM map type pointing at the OpenStreetMap tile server
+    map.mapTypes.set("OSM", mapTypeOSM)
     return center;
   }).catch(e => { console.error(e); });
 }
@@ -216,7 +218,16 @@ function teardown () { // {{{1
 }
 
 function watchMovie () { // {{{1
-  console.log('watchMovie')
+  const center = { lat: 25.74, lng: -80.2 }
+  const mapOptions = {
+    center,
+    mapTypeId: "OSM",
+    mapTypeControl: false,
+    streetViewControl: false,
+    zoom: 12
+  }
+  map = new google.maps.Map(document.getElementById("map"), mapOptions);
+  map.mapTypes.set("OSM", mapTypeOSM)
 }
 
 export { // {{{1
