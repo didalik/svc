@@ -141,6 +141,12 @@ function flag (position) { // {{{1
   popup.ov.setMap(map)
 }
 
+function log (...args) { // {{{1
+  console.log(...args)
+  window.vm.c.queue.push(args.length, ...args)
+  window.vm.c.dequeue && window.vm.c.dequeue()
+}
+
 function mark (position, title, content) { // {{{1
   let { s, e, c, d } = this
   const pin = new c.marker.PinElement({
@@ -259,5 +265,5 @@ function watchMovie () { // {{{1
 }
 
 export { // {{{1
-  configure, watchMovie,
+  configure, log, watchMovie,
 }

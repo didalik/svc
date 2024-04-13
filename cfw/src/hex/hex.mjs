@@ -1,4 +1,4 @@
-import { configure, watchMovie, } from './util.mjs' // {{{1
+import { configure, log, watchMovie, } from './util.mjs' // {{{1
 import { startDemo, } from './poc.mjs'
 
 let service = { // {{{1
@@ -13,7 +13,7 @@ let user = {
   wsUserURL: 'WS_USER_URL',
 }
 
-let vm = { s: [], e: { log: console.log }, c: { watchMovie }, d: {} } // {{{1
+let vm = { s: [], e: { log }, c: { queue: [], watchMovie }, d: {} } // {{{1
 window.vm = vm
 
 configure(user) /*.then(user => user.bindToAgent(service)).
@@ -21,6 +21,5 @@ configure(user) /*.then(user => user.bindToAgent(service)).
   then(user => user.close()).
   catch(e => console.error(e))
   */
-//startDemo.call(vm).then(_ => console.log(vm)).
-//  catch(e => { throw e })
-
+startDemo.call(vm).then(_ => console.log(vm))
+  .catch(e => { throw e })
