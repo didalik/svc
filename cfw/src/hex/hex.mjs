@@ -13,7 +13,24 @@ let user = {
   wsUserURL: 'WS_USER_URL',
 }
 
-let vm = { s: [], e: { log }, c: { queue: [], watchMovie }, d: {} } // {{{1
+let vm = { // {{{1
+  s: [], 
+  e: { log }, 
+  c: {
+    /*
+    decoded: [ // {{{2
+      'HEX_CREATOR ready', // 0
+      'HEX_CREATOR loaded', // 1
+      'adding HEX_Issuer...', // 2
+      'HEX_Issuer added', // 3
+      'adding HEX_Agent...', // 4
+      'HEX_Agent added', // 5
+    ], // }}}2
+    */
+    decoded: [], queue: [], watchMovie 
+  }, 
+  d: {} 
+}
 window.vm = vm
 
 configure(user) /*.then(user => user.bindToAgent(service)).

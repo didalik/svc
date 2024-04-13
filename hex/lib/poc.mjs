@@ -135,7 +135,6 @@ function onEffectBob (poc, effect) { // {{{1
 
 function onEffectCyn (poc, effect) { // {{{1
   let { s, e, c, d } = this
-  //e.log('onEffectCyn', effect)
 }
 
 function onIssuerEffectAnn (poc, effect) { // {{{1
