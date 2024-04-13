@@ -142,9 +142,24 @@ function flag (position) { // {{{1
 }
 
 function mark (position, title, content) { // {{{1
-  const marker = new google.maps.Marker({ map, position, title, })
-  const infowindow = new google.maps.InfoWindow({ content })
-  google.maps.event.addListener(marker, 'click', _ => infowindow.open(map, marker))
+  let { s, e, c, d } = this
+  const pin = new c.marker.PinElement({
+    background: "#FBBC04",
+    borderColor: "#137333",
+    glyphColor: "white",
+    scale: 0.8,
+  })
+  const marker = new c.marker.AdvancedMarkerElement({ 
+    map, position, title, content: pin.element
+  });
+  const infoWindow = new c.maps.InfoWindow()
+  marker.addListener('click', ({ domEvent, latLng }) => {
+    const { target } = domEvent
+    infoWindow.close()
+    infoWindow.setContent(content)
+    infoWindow.open(marker.map, marker)
+  })
+  return marker;
 }
 
 function markGuest (guest) { // {{{1
@@ -185,9 +200,9 @@ function markup (data) { // {{{1
 }
 
 function setup (center, guestId) { // {{{1
-  console.log('- setup center', center, 'guestId', guestId)
+  //console.log('- setup center', center, 'guestId', guestId) // {{{2
 
-  const loader = new Loader({ apiKey, version: "weekly", });
+  const loader = new Loader({ apiKey, version: "weekly", }) // {{{2
   const mapOptions = {
     center,
     mapTypeId: "OSM",
@@ -209,8 +224,8 @@ function setup (center, guestId) { // {{{1
 
     // Define OSM map type pointing at the OpenStreetMap tile server
     map.mapTypes.set("OSM", mapTypeOSM)
-    return center;
-  }).catch(e => { console.error(e); });
+    return center; 
+  }).catch(e => { console.error(e); }); // }}}2
 }
 
 function teardown () { // {{{1
@@ -218,9 +233,11 @@ function teardown () { // {{{1
 }
 
 function watchMovie () { // {{{1
+  let { s, e, c, d } = this
   const center = { lat: 25.74, lng: -80.2 }
   const mapOptions = {
     center,
+    mapId: "PoC_MAP_ID",
     mapTypeId: "OSM",
     mapTypeControl: false,
     streetViewControl: false,
@@ -228,6 +245,17 @@ function watchMovie () { // {{{1
   }
   map = new google.maps.Map(document.getElementById("map"), mapOptions);
   map.mapTypes.set("OSM", mapTypeOSM)
+
+  google.maps.importLibrary("marker").then(r => {
+    c.marker = r
+    return google.maps.importLibrary('maps');
+  }).then(r => {
+    c.maps = r
+    let marker = mark.call(this, { lat: 25.72, lng: -80.25 }, 
+      'Ann', 'Fresh red snapper for 4 persons GGS. HEXA 1000'
+    )
+    //setTimeout(marker.click, 1000) // - not an HTMLElement
+  })
 }
 
 export { // {{{1
