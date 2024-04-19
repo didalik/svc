@@ -18,7 +18,6 @@ function start_local_dev () { # for svc $1, log to $LOCALDEV_LOG, $! >> .pids2ki
   local svc_dir=$DAK_HOME/svc/${svc_name}
   local dev_fifo=${svc_dir}/dev.fifo
   local dev_script=${svc_dir}/${svc_name}-dev.sh
-  local grep_pattern='wrangler-dist/cli.js dev'
 
   echo "- $0 checking local svc ${svc_name}..." >> $LOCALDEV_LOG
   if [ $(ps -ef|grep "${svc_name}-dev.sh"|wc -l) -eq 1 ]; then
