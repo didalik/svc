@@ -17,16 +17,6 @@ let vm = { // {{{1
   s: [], 
   e: { log }, 
   c: {
-    /*
-    decoded: [ // {{{2
-      'HEX_CREATOR ready', // 0
-      'HEX_CREATOR loaded', // 1
-      'adding HEX_Issuer...', // 2
-      'HEX_Issuer added', // 3
-      'adding HEX_Agent...', // 4
-      'HEX_Agent added', // 5
-    ], // }}}2
-    */
     decoded: [], queue: [], watchMovie 
   }, 
   d: {} 
@@ -37,6 +27,6 @@ configure(user) /*.then(user => user.bindToAgent(service)).
   then(user => user.use(service)).
   then(user => user.close()).
   catch(e => console.error(e))
-  */
 startDemo.call(vm).then(_ => console.log(vm))
   .catch(e => { throw e })
+  */
