@@ -1,5 +1,5 @@
 import { Loader } from '@googlemaps/js-api-loader' // {{{1
-import { apiKey, } from '../../../../../../../../../../../../env.mjs'
+import { apiKey, } from '../../../../../../env.mjs'
 import { WsConnection, } from './ws.mjs'
 
 let google, map, ok, notok, guests = { add: [] }, myId // {{{1
