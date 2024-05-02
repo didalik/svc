@@ -1,10 +1,22 @@
 <!DOCTYPE html>
+<!-- {{{1
+# Copyright (c) 2023-present, Дід Alik and the Kids
+#
+# This script is licensed under the Apache License, Version 2.0, found in the
+# LICENSE file in the root directory of this source tree.
+##
+}}}1 -->
 <html>
   <head> <!-- {{{1 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>An s2cb service example</title>
+    <title>Stellar Help Exchange</title>
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/style.css" />
+    <script>
+function watchMovie () {
+  window.vm.c.watchMovie.call(window.vm)
+}
+    </script>
   </head>
   <body> <!-- {{{1 -->
     <div tabindex="800" id="map"></div>
@@ -13,21 +25,32 @@
     </div>
     <div id="center-radios"> <!-- {{{2 -->
       <fieldset>
-        <legend>You can now observe:</legend>
+        <legend>Welcome to Stellar HEX!</legend>
+
+      <p>
+      Hi there, I'm Дід Alik and Stellar Help Exchange (HEX) is my hobby project. The project's goal is to establish an equitable marketplace on <a href='https://stellar.org' target='_blank'>Stellar</a> network - if you do not get the help you paid for, you get your payment back. To give you a glimpse on what it is, I recorded this <a href='https://youtu.be/y4TELgx28D4' target='_blank'>video</a> (please ignore the obsolete stuff after 3:18).
+      </p>
+      <p>
+      To see how it works, use this Proof-of-Concept Demo - it runs on Stellar TESTNET and provides you with your own copy of the interactions outlined in the video. The demo output lets you analyze its results with <a href='https://laboratory.stellar.org/#?network=test' target='_blank'>Stellar Laboratory</a>, making your review of the project's <a href='https://github.com/didalik/dak-hex-user' target='_blank'>codebase</a> a breeze. The output goes to your browser's console and is also used to play with markers here.
+      </p>
         <div>
-          <input type="radio" name='watch' id='center-radio-users' style='cursor:pointer'/>
-          <label for='center-radio-users'>all users of the service</label>
+          <input type="radio" name='watch' id='center-radio-users' 
+            onclick='javascript:watchMovie()' style='cursor:pointer'/>
+          <label for='center-radio-users'>Watch the markers</label>
         </div>
+      <p>
+And you can always take a look at my <a href='https://github.com/didalik/dak-hex-user/blob/main/poc/latest_test.html' target='_blank'>latest test run</a> of the demo.
+      </p>
         <div>
           <input type="radio" name='watch' id='center-radio-hackers' style='cursor:pointer'/>
-          <label for='center-radio-hackers'>hackers trying to break the service</label>
+          <label for='center-radio-hackers'>Visit the marketplace</label>
         </div>
-        <!--
-        -->
         <div>
           <input type="radio" name='watch' id='center-radio-more' style='cursor:pointer'/>
-          <label for='center-radio-more'>more info</label>
+          <label for='center-radio-more'>More info</label>
         </div>
+        <!-- {{{3
+          }}}3 -->
       </fieldset>
     </div> <!-- }}}2 -->
   </body> <!-- }}}1 -->

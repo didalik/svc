@@ -5,6 +5,7 @@ import { WsConnection, } from './ws.mjs'
 let google, map, ok, notok, guests = { add: [] }, myId // {{{1
 let wait4setup = new Promise((g, b) => { ok = g; notok = b; })
 let wait4markup = new Promise((g, b) => { guests.ok = g; guests.notok = b; })
+let mapTypeOSM
 
 class Popup { // {{{1
   constructor(position, bubble, radios) {
@@ -132,6 +133,52 @@ function configure (user) { // {{{1
   return Promise.resolve(new User(user));
 }
 
+function decode (args) { // {{{1
+  let { s, e, c, d } = this
+  //c.decoded.push(args)
+
+  const offerBob = _ => args[0] == 'demoBob makeOffer'
+  const offerMade = offer => markOfferMade.call(this,
+    { lat: 25.68, lng: -80.20 }, 'Bob', offer
+  )
+  const offerTaken = _ => args[0].done == 'dealOffer'
+
+  const requestAnn = _ => args[0] == 'demoAnn makeRequest'
+  const requestMade = request => markRequestMade.call(this, 
+    { lat: 25.72, lng: -80.25 }, 'Ann', request
+  )
+  const requestTaken = _ => args[0].done == 'dealRequest'
+
+  const takeCyn = _ => args[0] == 'onIssuerEffectCyn take'
+  const taking = _ => markTaking.call(this,
+    { lat: 25.685, lng: -80.17 }, 'Cyn', 'taking...'
+  )
+
+  switch (true) {
+    case offerBob():
+      return c.markerOffer = offerMade(args[1]);
+    case offerTaken():
+      return markOfferTaken.call(this);
+    case requestAnn():
+      return c.markerRequest = requestMade(args[1]);
+    case requestTaken():
+      return markRequestTaken.call(this);
+    case takeCyn():
+      return taking();
+  }
+}
+
+function dequeue (queue, dec) { // {{{1
+  let { s, e, c, d } = this
+  while (queue.length > 0) {
+    let n = queue.shift()
+    let args = queue.splice(0, n)
+    dec.call(this,
+      args
+    )
+  }
+}
+
 function flag (position) { // {{{1
   let p = new google.maps.LatLng(position.lat, position.lng)
   let popup = new Popup(p, document.getElementById('center-bubble'),
@@ -140,10 +187,27 @@ function flag (position) { // {{{1
   popup.ov.setMap(map)
 }
 
+function log (...args) { // {{{1
+  console.log(...args)
+  window.vm.c.queue.push(args.length, ...args)
+  window.vm.c.dequeue && window.vm.c.dequeue.call(window.vm, 
+    window.vm.c.queue, decode
+  )
+}
+
 function mark (position, title, content) { // {{{1
-  const marker = new google.maps.Marker({ map, position, title, })
-  const infowindow = new google.maps.InfoWindow({ content })
-  google.maps.event.addListener(marker, 'click', _ => infowindow.open(map, marker))
+  let { s, e, c, d } = this
+  const marker = new c.marker.AdvancedMarkerElement({ 
+    map, position, title, content: c.pin.element
+  });
+  const infoWindow = new c.maps.InfoWindow()
+  marker.addListener('click', ({ domEvent, latLng }) => {
+    const { target } = domEvent
+    infoWindow.close()
+    infoWindow.setContent(content)
+    infoWindow.open(marker.map, marker)
+  })
+  return marker;
 }
 
 function markGuest (guest) { // {{{1
@@ -170,6 +234,64 @@ function markMore (guest, data) { // {{{1
   wait4markup.then(_ => markGuest(guest)).catch(e => console.error(e))
 }
 
+function markOfferMade (position, title, content) { // {{{1
+  let { s, e, c, d } = this
+  c.pin = new c.marker.PinElement({
+    background: "green",
+    borderColor: "black",
+    glyphColor: "white",
+    //scale: 0.8,
+  })
+  return mark.call(this,
+    position, title, content
+  );
+}
+
+function markOfferTaken () { // {{{1
+  let { s, e, c, d } = this
+  c.markerOffer.content = new c.marker.PinElement({ 
+    background: "green",
+    borderColor: "black",
+    glyph: '1',
+  }).element
+}
+
+function markRequestMade (position, title, content) { // {{{1
+  let { s, e, c, d } = this
+  c.pin = new c.marker.PinElement({
+    background: "red",
+    borderColor: "black",
+    glyphColor: "white",
+    //scale: 0.8,
+  })
+  return mark.call(this,
+    position, title, content
+  );
+}
+
+function markRequestTaken () { // {{{1
+  let { s, e, c, d } = this
+  c.markerRequest.content = new c.marker.PinElement({ 
+    background: "red",
+    borderColor: "black",
+    glyph: '1',
+  }).element
+}
+
+function markTaking (position, title, content) { // {{{1
+  let { s, e, c, d } = this
+  c.countTakes ??= 1
+  c.pin = new c.marker.PinElement({
+    background: "yellow",
+    borderColor: "black",
+    glyph: `${c.countTakes++}`,
+    //scale: 0.8,
+  })
+  return mark.call(this,
+    position, title, content
+  );
+}
+
 function markup (data) { // {{{1
   console.log('- markup data.length', data.length)
 
@@ -184,9 +306,9 @@ function markup (data) { // {{{1
 }
 
 function setup (center, guestId) { // {{{1
-  console.log('- setup center', center, 'guestId', guestId)
+  //console.log('- setup center', center, 'guestId', guestId) // {{{2
 
-  const loader = new Loader({ apiKey, version: "weekly", });
+  const loader = new Loader({ apiKey, version: "weekly", }) // {{{2
   const mapOptions = {
     center,
     mapTypeId: "OSM",
@@ -197,24 +319,48 @@ function setup (center, guestId) { // {{{1
   return loader.load().then(g => {
     google = g; myId = guestId; ok()
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-    // Define OSM map type pointing at the OpenStreetMap tile server
-    map.mapTypes.set("OSM", new google.maps.ImageMapType({
+    mapTypeOSM = new google.maps.ImageMapType({
       getTileUrl: function(coord, zoom) {
         return "https://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
       },
       tileSize: new google.maps.Size(256, 256),
       name: "OpenStreetMap",
       maxZoom: 18
-    }))
-    return center;
-  }).catch(e => { console.error(e); });
+    })
+
+    // Define OSM map type pointing at the OpenStreetMap tile server
+    map.mapTypes.set("OSM", mapTypeOSM)
+    return center; 
+  }).catch(e => { console.error(e); }); // }}}2
 }
 
 function teardown () { // {{{1
   alert('teardown')
 }
 
+function watchMovie () { // {{{1
+  let { s, e, c, d } = this
+  const center = { lat: 25.74, lng: -80.2 }
+  const mapOptions = {
+    center,
+    mapId: "PoC_MAP_ID",
+    mapTypeId: "OSM",
+    mapTypeControl: false,
+    streetViewControl: false,
+    zoom: 12
+  }
+  map = new google.maps.Map(document.getElementById("map"), mapOptions);
+  map.mapTypes.set("OSM", mapTypeOSM)
+
+  google.maps.importLibrary("marker").then(r => {
+    c.marker = r
+    return google.maps.importLibrary('maps');
+  }).then(r => {
+    c.maps = r
+    c.dequeue = dequeue
+  })
+}
+
 export { // {{{1
-  configure,
+  configure, log, watchMovie,
 }

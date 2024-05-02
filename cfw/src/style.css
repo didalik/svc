@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  * * */
 
-/* html, body, #map {{{1 */
+/* html, body, a, #map {{{1 */
 html {
   scroll-behavior: smooth;
 }
@@ -13,6 +13,33 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+a {
+  outline-color: transparent;
+}
+
+a:link {
+  color: #6900ff;
+}
+
+a:visited {
+  color: #a5c300;
+}
+
+a:focus {
+  text-decoration: none;
+  background: #bae498;
+}
+
+a:hover {
+  text-decoration: none;
+  background: #cdfeaa;
+}
+
+a:active {
+  background: #6900ff;
+  color: #cdfeaa;
 }
 
 #map {
@@ -38,23 +65,23 @@ body {
   overflow-y: auto;
   max-height: 150px;
   cursor: auto;
+  display: none;
   box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
 }
 
 .popup-radios {
   position: absolute;
-  top: 160px;
+  top: 210px;
   left: 0;
   transform: translate(-50%, -100%);
   background-color: rgba(255,255,255,0.6);
-  width: 300px;
+  width: 360px;
   padding: 5px;
   border-radius: 5px;
   font-family: sans-serif;
   font-size: 15px;
   overflow-y: auto;
   cursor: auto;
-  display: none;
   box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
 }
 
