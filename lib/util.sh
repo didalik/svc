@@ -27,11 +27,9 @@ function start_local_dev () { # for svc $1, log to $LOCALDEV_LOG, $! >> .pids2ki
     echo $svc_name > $dev_fifo
     tail -f $LOCALDEV_LOG | while read; do
       if [ "$svc_name" = 'index' ]; then
-        [[ "$REPLY" == *Ready\ on\ http://127.0.0.1:8787 ]] && break
-        [[ "$REPLY" == *Ready\ on\ http://localhost:8787 ]] && break
+        [[ "$REPLY" == *Updated\ and\ ready\ on\ http://127.0.0.1:8787/ ]] && break
       else
-        [[ "$REPLY" == *Ready\ on\ http://127.0.0.1:8788 ]] && break
-        [[ "$REPLY" == *Ready\ on\ http://localhost:8788 ]] && break
+        [[ "$REPLY" == *Updated\ and\ ready\ on\ http://127.0.0.1:8788/ ]] && break
       fi
     done
   fi
