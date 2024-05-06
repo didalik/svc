@@ -1,9 +1,9 @@
 import { // {{{1
   pocAgentSellHEXA, pocSetup,
-} from '../../../hex/lib/poc.mjs'
+} from '../../../../hex/lib/poc.mjs'
 import {
   addHEX_Agent, addHEX_CREATOR, addHEX_Issuer,
-} from '../../../hex/lib/sdk.mjs'
+} from '../../../../hex/lib/sdk.mjs'
 
 /* Mapping JS code imports to vim tabs and splits, example: {{{1
 

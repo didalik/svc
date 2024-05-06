@@ -27,6 +27,6 @@ configure(user) /*.then(user => user.bindToAgent(service)).
   then(user => user.use(service)).
   then(user => user.close()).
   catch(e => console.error(e))
-  */
 startDemo.call(vm).then(_ => console.log(vm))
   .catch(e => { throw e })
+  */
