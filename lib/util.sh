@@ -19,9 +19,9 @@ function start_local_dev () { # for svc $1, log to $LOCALDEV_LOG, $! >> .pids2ki
   local dev_fifo=${svc_dir}/dev.fifo
   local dev_script=${svc_dir}/${svc_name}-dev.sh
 
-  echo "- $0 checking local svc ${svc_name}..." >> $LOCALDEV_LOG
+  #echo "- $0 checking local svc ${svc_name}..." >> $LOCALDEV_LOG
   if [ $(ps -ef|grep "${svc_name}-dev.sh"|wc -l) -lt 2 ]; then
-    echo "- $0 starting local svc ${svc_name}..." >> $LOCALDEV_LOG
+    #echo "- $0 starting local svc ${svc_name}..." >> $LOCALDEV_LOG
     $dev_script >> $LOCALDEV_LOG 2>&1 &
     echo $! >> .pids2kill
     echo $svc_name > $dev_fifo
