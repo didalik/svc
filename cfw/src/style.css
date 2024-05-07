@@ -108,7 +108,7 @@ a:active {
   /* The tip is 8px high, and 12px wide. */
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 8px solid white;
+  border-top: 8px solid transparent; /*white;*/
 }
 
 /* JavaScript will position this div at the bottom of the popup tip. {{{1 */

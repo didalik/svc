@@ -1,4 +1,4 @@
-import { configure, log, watchMovie, } from './util.mjs' // {{{1
+import { configure, log, visitHEX, } from './util.mjs' // {{{1
 import { startDemo, } from './poc.mjs'
 
 let service = { // {{{1
@@ -17,7 +17,7 @@ let vm = { // {{{1
   s: [], 
   e: { log }, 
   c: {
-    decoded: [], queue: [], watchMovie 
+    decoded: [], queue: [], visitHEX 
   }, 
   d: {} 
 }

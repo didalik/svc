@@ -338,8 +338,11 @@ function teardown () { // {{{1
   alert('teardown')
 }
 
-function watchMovie () { // {{{1
+function visitHEX () { // {{{1
   let { s, e, c, d } = this
+  console.log('- visitHEX this', this)
+  return; // TODO implement
+
   const center = { lat: 25.74, lng: -80.2 }
   const mapOptions = {
     center,
@@ -362,5 +365,5 @@ function watchMovie () { // {{{1
 }
 
 export { // {{{1
-  configure, log, watchMovie,
+  configure, log, visitHEX,
 }
