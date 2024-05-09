@@ -13,26 +13,28 @@ function cc () { # clone our repo, checkout its main branch {{{1
   git checkout main > /dev/null 2>&1
 }
 
-function start_local_dev () { # for svc $1, log to $LOCALDEV_LOG, $! >> .pids2kill {{{1
-  local svc_name=$1
+function start_local_dev () { # log to $LOCALDEV_LOG, $! >> .pids2kill {{{1
+  local svc_name=$1 build=$2 # {{{2
   local svc_dir=$DAK_HOME/svc/${svc_name}
   local dev_fifo=${svc_dir}/dev.fifo
   local dev_script=${svc_dir}/${svc_name}-dev.sh
 
-  #echo "- $0 checking local svc ${svc_name}..." >> $LOCALDEV_LOG
-  if [ $(ps -ef|grep "${svc_name}-dev.sh"|wc -l) -lt 2 ]; then
-    #echo "- $0 starting local svc ${svc_name}..." >> $LOCALDEV_LOG
+  if [ $(ps -ef|grep "${svc_name}-dev.sh"|wc -l) -lt 2 ]; then # {{{2
     $dev_script >> $LOCALDEV_LOG 2>&1 &
     echo $! >> .pids2kill
     echo $svc_name > $dev_fifo
     tail -f $LOCALDEV_LOG | while read; do
       if [ "$svc_name" = 'index' ]; then
-        [[ "$REPLY" == *Updated\ and\ ready\ on\ http://127.0.0.1:8787/ ]] && break
+        if [ "$build" = 'yes' ]; then
+          [[ "$REPLY" == *Updated\ and\ ready\ on\ http://127.0.0.1:8787/ ]] && break
+        else
+          [[ "$REPLY" == *Ready\ on\ http://127.0.0.1:8787/ ]] && break
+        fi
       else
         [[ "$REPLY" == *Updated\ and\ ready\ on\ http://127.0.0.1:8788/ ]] && break
       fi
     done
-  fi
+  fi # }}}2
   echo "- $0 local svc ${svc_name} is ON." >> $LOCALDEV_LOG
 }
 

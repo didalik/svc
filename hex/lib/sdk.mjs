@@ -16,9 +16,10 @@ import { // {{{1
 async function addHEX_CREATOR (server = null, doLoad = false) { // {{{1
   let { s, e, c, d } = this
   server ??= new Horizon.Server("https://horizon-testnet.stellar.org")
-  let HEX_CREATOR_SK, HEX_CREATOR_PK, account = null
-  let [SK, PK] = storeKeys('build', 'testnet')
-  HEX_CREATOR_SK = SK; HEX_CREATOR_PK = PK
+  let account = null
+  let [HEX_CREATOR_SK, HEX_CREATOR_PK] = storeKeys.call(this, 
+    'build', 'testnet'
+  )
   try {
     const response = await fetch(
       `https://friendbot.stellar.org?addr=${encodeURIComponent(HEX_CREATOR_PK)}`
@@ -43,11 +44,11 @@ async function addHEX_CREATOR (server = null, doLoad = false) { // {{{1
 
 async function addHEX_Agent (limit) { // {{{1
   let { s, e, c, d } = this
-  let HEX_Agent_SK, HEX_Agent_PK, txId = null
   e.log('addHEX_Agent...')
-  let [SK, PK] = storeKeys('build/testnet', 'HEX_Agent')
-  HEX_Agent_SK = SK; HEX_Agent_PK = PK
-  txId = await createAccount.call(this, HEX_Agent_PK, '9', {}, d.kp)
+  let [HEX_Agent_SK, HEX_Agent_PK] = storeKeys.call(this,
+    'build/testnet', 'HEX_Agent'
+  )
+  let txId = await createAccount.call(this, HEX_Agent_PK, '9', {}, d.kp)
   e.log('addHEX_Agent', HEX_Agent_PK, 'txId', txId)
   let [HEX_Issuer_SK, HEX_Issuer_PK] = d.keysIssuer
   const ClawableHexa = new Asset('ClawableHexa', HEX_Issuer_PK)
@@ -77,11 +78,11 @@ async function addHEX_Agent (limit) { // {{{1
 
 async function addHEX_Issuer (homeDomain) { // {{{1
   let { s, e, c, d } = this
-  let HEX_Issuer_SK, HEX_Issuer_PK, txId = null
   e.log('addHEX_Issuer...')
-  let [SK, PK] = storeKeys('build/testnet', 'HEX_Issuer')
-  HEX_Issuer_SK = SK; HEX_Issuer_PK = PK
-  txId = await createAccount.call(this, HEX_Issuer_PK, '9',
+  let [HEX_Issuer_SK, HEX_Issuer_PK] = storeKeys.call(this,
+    'build/testnet', 'HEX_Issuer'
+  )
+  let txId = await createAccount.call(this, HEX_Issuer_PK, '9',
     {
       homeDomain,
       setFlags: AuthClawbackEnabledFlag | AuthRevocableFlag,
@@ -392,10 +393,11 @@ async function secdVm (keysIssuer, keysAgent, log, limit, PUBLIC = false) { // {
 }
 
 function storeKeys (dirname, basename) { // {{{1
-  //fs.mkdirSync(dirname, { recursive: true, })
+  let { s, e, c, d } = this
+  c.fs && c.fs.mkdirSync(dirname, { recursive: true, })
   let pair = Keypair.random()
   let SK_PK = pair.secret() + ' ' + pair.publicKey()
-  //fs.writeFileSync(`${dirname}/${basename}.keys`, SK_PK)
+  c.fs && c.fs.writeFileSync(`${dirname}/${basename}.keys`, SK_PK)
   let p = SK_PK.toString().split(' ')
   return [p[0].trim(), p[1].trim()];
 }
