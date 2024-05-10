@@ -44,7 +44,7 @@ async function addHEX_CREATOR (server = null, doLoad = false) { // {{{1
 
 async function addHEX_Agent (limit) { // {{{1
   let { s, e, c, d } = this
-  e.log('addHEX_Agent...')
+  //e.log('addHEX_Agent...')
   let [HEX_Agent_SK, HEX_Agent_PK] = storeKeys.call(this,
     'build/testnet', 'HEX_Agent'
   )
@@ -78,7 +78,7 @@ async function addHEX_Agent (limit) { // {{{1
 
 async function addHEX_Issuer (homeDomain) { // {{{1
   let { s, e, c, d } = this
-  e.log('addHEX_Issuer...')
+  //e.log('addHEX_Issuer...')
   let [HEX_Issuer_SK, HEX_Issuer_PK] = storeKeys.call(this,
     'build/testnet', 'HEX_Issuer'
   )
