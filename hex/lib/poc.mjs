@@ -87,7 +87,6 @@ function demoAnn (poc) { // {{{1
     poc.Ann.amount = r.amount,
     poc.Ann.balanceId = r.balanceId, r.txId
   ))
-  //setTimeout(poc.Ann.resolve, 31000, { tag: 'Ann', timeout: '31s' })
 }
 
 function demoBob (poc, resolve, reject, tag, r) { // {{{1
@@ -98,7 +97,6 @@ function demoBob (poc, resolve, reject, tag, r) { // {{{1
   ).then(r => e.log('demoBob makeOffer', r.offer, 
     poc.Bob.balanceId = r.balanceId, r.txId
   ))
-  //setTimeout(poc.Bob.resolve, 32000, { tag: 'Bob', timeout: '32s' })
 }
 
 function demoCyn (poc) { // {{{1
@@ -173,7 +171,7 @@ async function onIssuerEffectCyn (poc, effect) { // {{{1
     await effect.operation().then(op => op.transaction()).
       then(t => (tx = t).operations()).then(ops => {
         if (tx.memo_type != MemoText) { // no, a takeOffer effect
-          return;
+          return;                       //
         }                               // yes, take it:
         //                                 p a y
         //                                /

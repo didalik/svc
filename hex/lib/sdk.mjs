@@ -305,7 +305,10 @@ function makeClaimableBalance ( // {{{1
     balanceId: getClaimableBalanceId(txR.result_xdr),
     txId: txR.id,
   })).catch(e => {
-    console.error('*** ERROR ***', e.response?.data.extras.result_codes)
+    console.error('*** ERROR *** makeClaimableBalance', 
+      e.response?.data.extras.result_codes,
+      e.message, e.stack
+    )
     throw e;
   });
 }
