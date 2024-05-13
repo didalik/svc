@@ -1,5 +1,32 @@
 import { configure, log, visitHEX, } from './util.mjs' // {{{1
-import { startDemo, } from './poc.mjs'
+import {
+  HEX_FEE, dealOffer, dealRequest, description, dog2hexa, hexa2dog,
+  makeOffer, makeRequest, parseHEXA, reclaim, repayOffer, repayRequest,
+  takeOffer, takeRequest,
+} from '../../../hex/lib/api.mjs'
+import {
+  convertClawableHexa,
+  createAccount, makeBuyOffer, makeSellOffer, memo2str,
+  storeKeys, trustAssets, updateTrustline,
+} from '../../../hex/lib/sdk.mjs'
+//import json from '../../../../../hex/user/prod/config/f_add_hex_makes.json'
+//console.log(json)
+
+/* Mapping JS code imports to vim tabs and splits, example: {{{1
+
+ this.mjs ---> api.mjs
+         \        |
+          \       | 
+           \      V  
+            -> sdk.mjs
+
+      maps to
+
+|     tab 1      |    tab 2      |
+|        |api.mjs|       |       |
+|this.mjs|-------|api.mjs|sdk.mjs|
+|        |sdk.mjs|       |       |
+*/
 
 let service = { // {{{1
   description: 'Stellar Help Exchange',
@@ -12,6 +39,12 @@ let user = {
   position: { lat: LATITUDE, lng: LONGITUDE },
   wsUserURL: 'WS_USER_URL',
 }
+
+let config = { // {{{1
+  HEX_Issuer_PK: 'STELLAR_HEX_ISSUER_PK',
+  nw: 'STELLAR_NETWORK',
+}
+console.log(config)
 
 let vm = { // {{{1
   s: [], 
