@@ -393,7 +393,7 @@ async function secdVm ( // {{{1
   const ClawableHexa = new Asset('ClawableHexa', keysIssuer[1])
   const HEXA = new Asset('HEXA', keysIssuer[1])
   const XLM = new Asset('XLM', null)
-  const agent = await server.loadAccount(keysAgent[1])
+  const agent = keysAgent ? await server.loadAccount(keysAgent[1]) : null
   const issuer = await server.loadAccount(keysIssuer[1])
   let d = { ClawableHexa, HEXA, XLM, agent, issuer, keysIssuer, keysAgent, limit }
   return { s, e, c, d };
