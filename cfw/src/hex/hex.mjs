@@ -55,7 +55,7 @@ let initVm = async _ => await secdVm(
   config.nw == 'public'         // PUBLIC
 ).then(vm => {
   window.vm = vm
-  vm.e.log(vm)
+  vm.e.log(vm, user)
   vm.s.push({ tag: "issuer's effects",
     close: vm.e.server.effects().forAccount(vm.d.issuer.id).stream({
       onerror:   e => { throw e; },
@@ -70,10 +70,10 @@ let initVm = async _ => await secdVm(
 })
 initVm()
 
-configure(user) /*.then(user => user.bindToAgent(service)). // {{{1
+configure(user).then(user => user.bindToAgent(service)). // {{{1
   then(user => user.use(service)).
-  then(user => user.close()).
-  catch(e => console.error(e))
+  then(user => user.close()).catch(e => console.error(e))
+
 /*startDemo.call(vm).then(_ => console.log(vm))
   .catch(e => { throw e })
   */
@@ -93,9 +93,6 @@ async function onIssuerEffect (effect) { // {{{1
     }
   }).catch(e => { throw e; })
   if (d.agent) {
-    let issuerEffects = s.shift()
-    issuerEffects.close()
-    e.log('closed', issuerEffects.tag)
   } else {
     d.keysAgent = [null, agentPK]
     d.agent = await e.server.loadAccount(agentPK)

@@ -59,10 +59,8 @@ class User { // {{{1
     return fetch(this.guestUseSvcUrl, { method: 'GET', }).then(async response => {
       let text
       if (response.ok) {
-        text = await response.text() // 'OK'
+        text = await response.text() // 'OK' TODO slowbosh
         this.wsConnection?.isOn || new WsConnection(this)
-        console.log('- user.bindToAgent guestUseSvcUrl fetch this', this)
-
         return promise;
       }
       try {
@@ -79,6 +77,12 @@ class User { // {{{1
     console.log('- user.boundToAgent agentId', agentId)
 
     this.bound(this)
+  }
+  onclose (a) { // {{{2
+    let { s, e, c, d } = window.vm
+    let issuerEffects = s.shift()
+    issuerEffects.close()
+    e.log('closed', issuerEffects.tag)
   }
   use (svc) { // {{{2
     let promise = new Promise((g, b) => { this.closing = g; this.notok = b; })
