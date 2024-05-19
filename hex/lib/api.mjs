@@ -20,6 +20,7 @@ function chunkDescToOps (description, source = null) { // {{{1
   if (description.length < 1 || description.length > 2000) {
     throw `- chunkDescToOps: description.length is ${description.length}`
   }
+  //console.log('- chunkDescToOps description', description)
 
   // Chunk description Operations into ops array
   let i = 0
@@ -27,6 +28,10 @@ function chunkDescToOps (description, source = null) { // {{{1
   while (description.length > 64) {
     let chunk = description.slice(0, 64)
     description = description.slice(64)
+    //console.log('- chunkDescToOps chunk.length', chunk.length,
+      //'description.length', description.length
+    //)
+
     if (source) {
       ops.push(
         Operation.manageData({ name: `data${i}`, value: chunk, source }),

@@ -97,5 +97,5 @@ async function onIssuerEffect (effect) { // {{{1
     d.keysAgent = [null, agentPK]
     d.agent = await e.server.loadAccount(agentPK)
   }
-  e.log(tx.memo, desc, amount)
+  e.log(tx.memo, desc, amount, tx.id)
 }

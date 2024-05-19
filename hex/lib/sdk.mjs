@@ -299,6 +299,8 @@ function makeClaimableBalance ( // {{{1
   for (let op of ops) {
     tx = tx.addOperation(op)
   }
+  //e.log('- makeClaimableBalance ops.length', ops.length)
+
   tx = tx.setTimeout(30).build()
   tx.sign(kp)
   return e.server.submitTransaction(tx).then(txR => ({
