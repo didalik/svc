@@ -18,6 +18,7 @@ function start_local_dev () { # log to $LOCALDEV_LOG, $! >> .pids2kill {{{1
   local svc_dir=$DAK_HOME/svc/${svc_name}
   local dev_fifo=${svc_dir}/dev.fifo
   local dev_script=${svc_dir}/${svc_name}-dev.sh
+  #local count='X'
 
   if [ $(ps -ef|grep "${svc_name}-dev.sh"|wc -l) -lt 2 ]; then # {{{2
     $dev_script >> $LOCALDEV_LOG 2>&1 &
@@ -31,7 +32,10 @@ function start_local_dev () { # log to $LOCALDEV_LOG, $! >> .pids2kill {{{1
           [[ "$REPLY" == *Ready\ on\ http://127.0.0.1:8787/ ]] && break
         fi
       else
-        [[ "$REPLY" == *Updated\ and\ ready\ on\ http://127.0.0.1:8788/ ]] && break
+        [[ "$REPLY" == *Updated\ and\ ready\ on\ http://127.0.0.1:8788/ ]] && \
+          break
+          #[ ${#count} = 2 ] && break
+        #count="${count}X"
       fi
     done
   fi # }}}2

@@ -57,9 +57,13 @@ class User { // {{{1
     this.svc = svc
     let promise = new Promise((g, b) => { this.bound = g; this.notok = b; })
     return fetch(this.guestUseSvcUrl, { method: 'GET', }).then(async response => {
-      let text
+      let text, json
       if (response.ok) {
-        text = await response.text() // 'OK' TODO slowbosh
+        //text = await response.text() // 'OK' TODO slowbosh
+        //console.log('- user.bindToAgent text', text)
+        json = await response.json()
+        console.log('- user.bindToAgent json', json)
+
         this.wsConnection?.isOn || new WsConnection(this)
         return promise;
       }
