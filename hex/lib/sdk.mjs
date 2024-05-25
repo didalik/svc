@@ -380,7 +380,7 @@ function offerMade (result_xdr, kind = 'manageBuyOfferResult') { // {{{1
 }
 
 async function secdVm ( // {{{1
-  keysIssuer, keysAgent, log, limit, PUBLIC = false, fs = null
+  keysIssuer, keysAgent, log, limit, HEX_FEE, PUBLIC = false, kit = null, fs = null
 ) {
   let s = []
   const nw = PUBLIC ? Networks.PUBLIC : Networks.TESTNET
@@ -389,9 +389,7 @@ async function secdVm ( // {{{1
     : "https://horizon-testnet.stellar.org"
   )
   let e = { log, nw, server }
-  let c = { 
-    HEX_FEE: "0.0000100", fs 
-  }
+  let c = { HEX_FEE, fs, kit }
   const ClawableHexa = new Asset('ClawableHexa', keysIssuer[1])
   const HEXA = new Asset('HEXA', keysIssuer[1])
   const XLM = new Asset('XLM', null)
