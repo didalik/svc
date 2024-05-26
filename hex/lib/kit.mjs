@@ -10,7 +10,7 @@ import {
   MemoText,
 } from '@stellar/stellar-sdk'
 
-const initVm = async c => await secdVm( // {{{1
+const initVm = c => secdVm( // {{{1
   [null, c.HEX_Issuer_PK], // keysIssuer
   null,                    // keysAgent
   console.log,             // log
@@ -32,6 +32,22 @@ const initVm = async c => await secdVm( // {{{1
   })
   return Promise.resolve(vm)
 })
+
+function getXids2map () { // {{{1
+  let { s, e, c, d } = this
+  return fetch(d.user.guestUseSvcUrl, { method: 'GET', }).
+    then(response => response.json())
+}
+
+function getXs (json) { // {{{1
+  let { s, e, c, d } = this
+  e.log(json)
+}
+
+function initModel () { // {{{1
+  let { s, e, c, d } = this
+  getXids2map.call(this).then(json => getXs.call(this, json))
+}
 
 async function onIssuerEffect (effect) { // claimable_balance_claimant_created {{{1
   let { s, e, c, d } = this, tx, agentPK, desc, amount
@@ -55,4 +71,6 @@ async function onIssuerEffect (effect) { // claimable_balance_claimant_created {
   e.log(tx.memo, desc, amount, tx.id)
 }
 
-export { initVm, }
+export { // {{{1
+  initModel, initVm, 
+}

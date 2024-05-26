@@ -1,4 +1,6 @@
 import { configure, } from './util.mjs' // {{{1
+
+import { Codec, Model, View, } from '../../../lib/mvc.mjs' // {{{1
 import * as kit from '../../../hex/lib/kit.mjs'
 //import json from '../../../../../hex/user/prod/config/f_add_hex_makes.json'
 //console.log(json)
@@ -36,9 +38,26 @@ let config = {
   kit,
 }
 kit.initVm(config).then(vm => {
+  Object.assign(vm.d, { service, user })
   window.vm = vm
+  console.log(vm)
+
+  return Promise.all([Codec.init(vm), Model.init(vm), View.init(vm)]);
+}).then(a => {
+  const [codec, model, view] = a
+  const log = window.vm.e.log
+  log(codec, model, view)
+
+}).catch(e => console.error(e)).finally(_ => console.log('MVC DONE'))
+/*
+setTimeout(_ => {
+  let vm = window.vm
+  vm.c.codec.resolve('codec resolved;')
+  vm.c.model.resolve('model resolved;')
+  vm.c.view.resolve('view resolved;')
   vm.e.log(vm, user)
-})
+
+}, 5000)
 
 configure(user).then(user => user.bindToAgent(service)). // {{{1
   then(user => user.use(service)).
