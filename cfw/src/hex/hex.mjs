@@ -38,10 +38,9 @@ let config = {
   kit,
 }
 kit.initVm(config).then(vm => {
-  Object.assign(vm.d, { service, user })
+  let tXs2map = [], tXs_read = 0
+  Object.assign(vm.d, { service, tXs2map, tXs_read, user })
   window.vm = vm
-  console.log(vm)
-
   return Promise.all([Codec.init(vm), Model.init(vm), View.init(vm)]);
 }).then(a => {
   const [codec, model, view] = a
@@ -50,15 +49,6 @@ kit.initVm(config).then(vm => {
 
 }).catch(e => console.error(e)).finally(_ => console.log('MVC DONE'))
 /*
-setTimeout(_ => {
-  let vm = window.vm
-  vm.c.codec.resolve('codec resolved;')
-  vm.c.model.resolve('model resolved;')
-  vm.c.view.resolve('view resolved;')
-  vm.e.log(vm, user)
-
-}, 5000)
-
 configure(user).then(user => user.bindToAgent(service)). // {{{1
   then(user => user.use(service)).
   then(user => user.close()).catch(e => console.error(e)).
