@@ -9,6 +9,8 @@ import { secdVm, } from './sdk.mjs'
 import {
   MemoText,
 } from '@stellar/stellar-sdk'
+import { Loader } from '@googlemaps/js-api-loader'
+import { apiKey, } from '../../../../../env.mjs'
 
 const initVm = c => secdVm( // {{{1
   [null, c.HEX_Issuer_PK], // keysIssuer
@@ -33,6 +35,54 @@ const initVm = c => secdVm( // {{{1
   return Promise.resolve(vm)
 })
 
+class ModalPane { // {{{1
+  constructor (vm) { // {{{2
+    this.vm = vm
+  }
+
+  show (contentId, close = null) { // {{{2
+    let background = document.getElementById("modalRoot");
+    background.style.display = "block";
+    let content = document.getElementById(contentId)
+    content.style.display = "block";
+
+    // Get the <span> element that closes the modal
+    let span = document.getElementById(`${contentId}X`)
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      background.style.display = "none";
+      content.style.display = "none";
+      !!close && close()
+    }
+
+    // When the user clicks anywhere outside of the content, close the modal.
+    window.onclick = function(event) {
+      if (event.target == background) {
+        background.style.display = "none";
+        content.style.display = "none";
+        !!close && close()
+      }   
+    }
+  }
+
+  static init (vm) { // {{{2
+    vm.c.view.modalPane = new ModalPane(vm)
+    vm.c.view.modalPane.show('welcome2HEX')
+    return 'View initialized.';
+  } // }}}2
+}
+
+function decodeDownstream () { // {{{1
+  let { s, e, c, d } = this
+  //vm.c.codec.decodeDownstream.resolve('First test of decodeDownstream.')
+}
+
+function encodeUpstream () { // {{{1
+  let { s, e, c, d } = this
+  //vm.c.codec.encodeUpstream.resolve('First test of encodeUpstream.')
+}
+
 function initModel () { // {{{1
   // Model is initialized when d.tXs2map holds locations and { desc, memo }
   // for all d.old_tXs_length transactions. A location is an array. A transaction
@@ -42,6 +92,8 @@ function initModel () { // {{{1
   //           [ txid, { desc, memo }, [ lng, lat ] ]
   // array.
   let { s, e, c, d } = this
+  Object.assign(d, { tXs2map: [], tXs_read: 0 })
+
   fetch(d.user.guestUseSvcUrl, { method: 'GET', }).then(response => response.json())
   .then(json => {
     d.old_tXs_length = json.taken.length
@@ -49,6 +101,36 @@ function initModel () { // {{{1
       tXpush.call(this, tX)
     }
   })
+}
+
+function initView () { // {{{1
+  let { s, e, c, d } = this
+  const loader = new Loader({ apiKey, version: "weekly", })
+  const mapOptions = {
+    center: d.user.position,
+    mapTypeId: "OSM",
+    mapTypeControl: false,
+    streetViewControl: false,
+    zoom: 2
+  };
+  loader.load().then(g => {
+    c.google = g
+    map = new g.maps.Map(document.getElementById("map"), mapOptions);
+    mapTypeOSM = new g.maps.ImageMapType({
+      getTileUrl: function(coord, zoom) {
+        return `https://tile.openstreetmap.org/${zoom}/${coord.x}/${coord.y}.png`;
+      },
+      tileSize: new g.maps.Size(256, 256),
+      name: "OpenStreetMap",
+      maxZoom: 18
+    })
+
+    // Define OSM map type pointing at the OpenStreetMap tile server
+    map.mapTypes.set("OSM", mapTypeOSM)
+
+    c.view.resolve(ModalPane.init(this))
+
+  }).catch(e => { console.error(e); }); 
 }
 
 async function onIssuerEffect (effect) { // claimable_balance_claimant_created {{{1
@@ -71,12 +153,13 @@ async function onIssuerEffect (effect) { // claimable_balance_claimant_created {
     // TODO take care of the (++d.tXs_read > d.old_tXs_length) case
     // when the model is not yet initialized.
     c.model.initialized = true
+    document.getElementById("welcome2HEXX").style.display = "block";
 
     let issuerEffects = s.shift()
     issuerEffects.close()
     e.log('closed', issuerEffects.tag)
 
-    resolve.call(this, 'Model initialized.')
+    c.model.resolve('Model initialized.')
     e.log(this)
 
   }
@@ -97,5 +180,6 @@ function tXpush (tX) { // {{{1
 }
 
 export { // {{{1
-  initModel, initVm, 
+  decodeDownstream, encodeUpstream,
+  initModel, initView, initVm, 
 }

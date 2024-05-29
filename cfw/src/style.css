@@ -149,4 +149,51 @@ a:active {
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+/* Modal Background {{{1 */
+.modal-background {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 10px; /* Location of the content box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.2); /* Black w/ opacity */
+}
+
+/* Modal Content {{{1 */
+.modal-content {
+  color: grey;
+  background-color: rgba(255,255,255,0.75);
+  display: none; /* Hidden by default */
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  border: 0;
+  border-radius: 9px;
+  box-shadow: 0 1px 8px -1px rgba(0, 0, 0, 0.8);
+  font: 400 18px Roboto, Arial, sans-serif;
+  font-size: calc(0.5rem + 2vw);
+}
+
+/* Modal Close Button {{{1 */
+.close {
+  display: none; /* Hidden by default */
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* }}}1 */
 

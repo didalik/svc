@@ -38,22 +38,17 @@ let config = {
   kit,
 }
 kit.initVm(config).then(vm => {
-  let tXs2map = [], tXs_read = 0
-  Object.assign(vm.d, { service, tXs2map, tXs_read, user })
+  Object.assign(vm.d, { service, user })
   window.vm = vm
-  return Promise.all([Codec.init(vm), Model.init(vm), View.init(vm)]);
+  return Promise.all([Model.init(vm), View.init(vm)]);
 }).then(a => {
-  const [codec, model, view] = a
-  const log = window.vm.e.log
-  log(codec, model, view)
+  const [modelReport, viewReport] = a
+  window.vm.e.log(modelReport, viewReport)
+
+  return Promise.resolve(window.vm);
+}).then(vm => Promise.all([Codec.decodeDownstream(vm), Codec.encodeUpstream(vm)])
+).then(a => {
+  const [decodeDownstreamReport, encodeUpstreamReport] = a
+  window.vm.e.log(decodeDownstreamReport, encodeUpstreamReport)
 
 }).catch(e => console.error(e)).finally(_ => console.log('MVC DONE'))
-/*
-configure(user).then(user => user.bindToAgent(service)). // {{{1
-  then(user => user.use(service)).
-  then(user => user.close()).catch(e => console.error(e)).
-  finally(_ => console.log('DONE'))
-
-/*startDemo.call(vm).then(_ => console.log(vm))
-  .catch(e => { throw e })
-  */

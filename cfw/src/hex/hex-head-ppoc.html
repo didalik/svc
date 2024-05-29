@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!-- {{{1
+# Copyright (c) 2023-present, Дід Alik and the Kids
+#
+# This script is licensed under the Apache License, Version 2.0, found in the
+# LICENSE file in the root directory of this source tree.
+##
+}}}1 -->
+<html>
+  <head> <!-- {{{1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Stellar Help Exchange</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/style.css" />
+    <script>
+function visitHEX () {
+  window.vm.c.visitHEX.call(window.vm)
+}
+    </script>
+  </head>
+  <body> <!-- {{{1 -->
+    <div tabindex="800" id="map"></div>
+    <div id="center-bubble"> <!-- {{{2 -->
+      <a href='https://www.cloudflare.com' target='_blank'><b>Cloudflare</b></a> says you're here.
+    </div>
+    <div id="center-radios"> <!-- {{{2 -->
+      <fieldset>
+        <legend>Welcome to Stellar HEX!</legend>
+
+      <p>
+      Hi there, I'm Дід Alik and Stellar Help Exchange (HEX) is my hobby project. The project's goal is to establish an equitable marketplace on <a href='https://stellar.org' target='_blank'>Stellar</a> network - if you do not get the help you paid for, you get your payment back. <a href='https://github.com/didalik/dak-hex-user/blob/main/poc/latest_test.html' target='_blank'>More</a>...
+      </p>
+      <div>
+        <input type="radio" name='watch' id='center-radio-hackers' 
+          onclick='javascript:visitHEX()' style='cursor:pointer'/>
+        <label for='center-radio-hackers'>Enter the marketplace</label>
+      </div>
+        <!-- {{{3
+          }}}3 -->
+      </fieldset>
+    </div> <!-- }}}2 -->
+  </body> <!-- }}}1 -->
+<script type="text/javascript">
