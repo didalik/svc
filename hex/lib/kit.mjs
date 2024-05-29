@@ -75,12 +75,35 @@ class ModalPane { // {{{1
 
 function decodeDownstream () { // {{{1
   let { s, e, c, d } = this
+  c.codec.decodeX()
   //vm.c.codec.decodeDownstream.resolve('First test of decodeDownstream.')
+}
+
+function decodeX () { // {{{1
+  let { s, e, c, d } = this
+  if( !c.view.initialized) {
+    return;
+  }
+  while (d.tXs2map.length > 0) {
+    let tx = d.tXs2map.shift()
+    let position = {
+      lat: tx[1].length == 2 ? tx[1][0] : tx[2][0],
+      lng: tx[1].length == 2 ? tx[1][1] : tx[2][1]
+    }
+    let [content, memo] = tx[1].length == 2 ? [tx[2].desc, tx[2].memo]
+      : [tx[1].desc, tx[1].memo]
+    let f = memo.startsWith('Offer') ? markOfferMade : markRequestMade
+    f.call(this, position, 'TODO: title', content)
+  }
 }
 
 function encodeUpstream () { // {{{1
   let { s, e, c, d } = this
   //vm.c.codec.encodeUpstream.resolve('First test of encodeUpstream.')
+}
+
+function encodeX () { // {{{1
+  let { s, e, c, d } = this
 }
 
 function initModel () { // {{{1
@@ -108,6 +131,7 @@ function initView () { // {{{1
   const loader = new Loader({ apiKey, version: "weekly", })
   const mapOptions = {
     center: d.user.position,
+    mapId: "Stellar_HEX_MAP_ID",
     mapTypeId: "OSM",
     mapTypeControl: false,
     streetViewControl: false,
@@ -124,13 +148,92 @@ function initView () { // {{{1
       name: "OpenStreetMap",
       maxZoom: 18
     })
-
-    // Define OSM map type pointing at the OpenStreetMap tile server
     map.mapTypes.set("OSM", mapTypeOSM)
+    return google.maps.importLibrary('marker');
+  }).then(r => {
+    c.marker = r
+    return google.maps.importLibrary('maps');
+  }).then(r => {
+    c.maps = r
 
+    c.view.initialized = true
+    c.codec?.decodeX()
     c.view.resolve(ModalPane.init(this))
+  })
+  .catch(e => { console.error(e); }); 
+}
 
-  }).catch(e => { console.error(e); }); 
+function mark (position, title, content) { // {{{1
+  let { s, e, c, d } = this
+  const marker = new c.marker.AdvancedMarkerElement({ 
+    map, position, title, content: c.pin.element
+  });
+  const infoWindow = new c.maps.InfoWindow()
+  marker.addListener('click', ({ domEvent, latLng }) => {
+    const { target } = domEvent
+    infoWindow.close()
+    infoWindow.setContent(content)
+    infoWindow.open(marker.map, marker)
+  })
+  return marker;
+}
+
+function markOfferMade (position, title, content) { // {{{1
+  let { s, e, c, d } = this
+  c.pin = new c.marker.PinElement({
+    background: "green",
+    borderColor: "black",
+    glyphColor: "white",
+    //scale: 0.8,
+  })
+  return mark.call(this,
+    position, title, content
+  );
+}
+
+function markOfferTaken () { // {{{1
+  let { s, e, c, d } = this
+  c.markerOffer.content = new c.marker.PinElement({ 
+    background: "green",
+    borderColor: "black",
+    glyph: '1',
+  }).element
+}
+
+function markRequestMade (position, title, content) { // {{{1
+  let { s, e, c, d } = this
+  c.pin = new c.marker.PinElement({
+    background: "red",
+    borderColor: "black",
+    glyphColor: "white",
+    //scale: 0.8,
+  })
+  return mark.call(this,
+    position, title, content
+  );
+}
+
+function markRequestTaken () { // {{{1
+  let { s, e, c, d } = this
+  c.markerRequest.content = new c.marker.PinElement({ 
+    background: "red",
+    borderColor: "black",
+    glyph: '1',
+  }).element
+}
+
+function markTaking (position, title, content) { // {{{1
+  let { s, e, c, d } = this
+  c.countTakes ??= 1
+  c.pin = new c.marker.PinElement({
+    background: "yellow",
+    borderColor: "black",
+    glyph: `${c.countTakes++}`,
+    //scale: 0.8,
+  })
+  return mark.call(this,
+    position, title, content
+  );
 }
 
 async function onIssuerEffect (effect) { // claimable_balance_claimant_created {{{1
@@ -176,10 +279,15 @@ function tXpush (tX) { // {{{1
   let { s, e, c, d } = this
   let txid = tX[0], data = tX[1]
   let index = d.tXs2map.findIndex(v => v[0] == txid)
-  index > -1 ? d.tXs2map[index].push(data) : d.tXs2map.push(tX)
+  if (index == -1) {
+    d.tXs2map.push(tX)
+    return;
+  }
+  d.tXs2map[index].push(data)
+  c.codec?.decodeX()
 }
 
 export { // {{{1
-  decodeDownstream, encodeUpstream,
+  decodeDownstream, decodeX, encodeUpstream, encodeX,
   initModel, initView, initVm, 
 }
