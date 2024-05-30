@@ -86,14 +86,16 @@ function decodeX () { // {{{1
   }
   while (d.tXs2map.length > 0) {
     let tx = d.tXs2map.shift()
-    let position = {
+    let x = tx[1].length == 2 ? tx[2] : tx[1]
+    x.txid = tx[0]
+    x.position = {
       lat: tx[1].length == 2 ? tx[1][0] : tx[2][0],
       lng: tx[1].length == 2 ? tx[1][1] : tx[2][1]
     }
-    let [content, memo] = tx[1].length == 2 ? [tx[2].desc, tx[2].memo]
-      : [tx[1].desc, tx[1].memo]
-    let f = memo.startsWith('Offer') ? markOfferMade : markRequestMade
-    f.call(this, position, 'TODO: title', content)
+    let f = x.memo.startsWith('Offer') ? markOfferMade : markRequestMade
+    mock(x)
+    x.marker = f.call(this, x.position, x.pk, x.desc)
+    d.tXs_mapped.push(x)
   }
 }
 
@@ -107,15 +109,16 @@ function encodeX () { // {{{1
 }
 
 function initModel () { // {{{1
-  // Model is initialized when d.tXs2map holds locations and { desc, memo }
-  // for all d.old_tXs_length transactions. A location is an array. A transaction
+  // Model is initialized when d.tXs2map holds locations and 
+  // { amount, desc, memo, pk } objects for all d.old_tXs_length transactions. 
+  // A location is an array. A transaction
   // is either
-  //           [ txid, [ lng, lat ], { desc, memo } ]
+  //           [ txid, [ lng, lat ], { amount, desc, memo, pk } ]
   // or
-  //           [ txid, { desc, memo }, [ lng, lat ] ]
+  //           [ txid, { amount, desc, memo, pk }, [ lng, lat ] ]
   // array.
   let { s, e, c, d } = this
-  Object.assign(d, { tXs2map: [], tXs_read: 0 })
+  Object.assign(d, { tXs2map: [], tXs_mapped: [], tXs_read: 0 })
 
   fetch(d.user.guestUseSvcUrl, { method: 'GET', }).then(response => response.json())
   .then(json => {
@@ -236,22 +239,43 @@ function markTaking (position, title, content) { // {{{1
   );
 }
 
+function mock (x) { // {{{1
+  switch(x.txid) {
+    case '439680cff6b1f8569790871df5533d6416ed4657f9b81f97032c0550ffd0a630':
+      return;
+    case 'fc373d5b35ce71f3d4c9e4501f9201ce49d6d4b77bc976fbec73cd008ca58bb3':
+      Object.assign(x.position, { lat: 50.4462921, lng: 30.5104239 })
+      return;
+    case 'd259a5acc158c1ce12c4db00c740094beb08a372cd443badeeab9484308a614e':
+      x.desc = `
+<b>Stellar HEX: Help wanted</b>
+<p>
+Signing bonus HEXA 1000 + (job done) * (hourly rate). <a>More</a>...
+</p>
+<p>
+<button>Take</button>
+</p>
+      `
+      return;
+  }
+}
+
 async function onIssuerEffect (effect) { // claimable_balance_claimant_created {{{1
-  let { s, e, c, d } = this, tx, agentPK, desc, amount
+  let { s, e, c, d } = this, tx, txPK, desc, amount
   await effect.operation().then(op => op.transaction())
   .then(t => (tx = t).operations()).then(ops => {
     if (tx.memo_type != MemoText) { // not a make, a takeOffer effect
       return;
     }
-    agentPK = ops.records[0].source_account
+    txPK = ops.records[0].source_account
     desc = description(ops)
     amount = parseHEXA(desc)
   }).catch(e => { throw e; })
   if (!d.agent) {
-    d.keysAgent = [null, agentPK]
-    d.agent = await e.server.loadAccount(agentPK)
+    d.keysAgent = [null, txPK]
+    d.agent = await e.server.loadAccount(txPK)
   }
-  tXpush.call(this, [tx.id, { desc, memo: tx.memo }])
+  tXpush.call(this, [tx.id, { amount, desc, memo: tx.memo, pk: txPK }])
   if (++d.tXs_read == d.old_tXs_length) { // Model is initialized.
     // TODO take care of the (++d.tXs_read > d.old_tXs_length) case
     // when the model is not yet initialized.
