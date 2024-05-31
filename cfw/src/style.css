@@ -195,5 +195,11 @@ a:active {
   text-decoration: none;
   cursor: pointer;
 }
+
+/* InfoWindow Take Button {{{1 */
+.take {
+  float: right;
+}
+
 /* }}}1 */
 
