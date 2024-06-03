@@ -73,6 +73,10 @@ class ModalPane { // {{{1
   } // }}}2
 }
 
+function addTake (x) { // {{{1
+  x.desc += `<hr/><button class='take' onclick='window.vm.c.kit.take("${x.txid}")'>Take</button>`
+}
+
 function decodeDownstream () { // {{{1
   let { s, e, c, d } = this
   c.codec.decodeX()
@@ -93,7 +97,7 @@ function decodeX () { // {{{1
       lng: tx[1].length == 2 ? tx[1][1] : tx[2][1]
     }
     let f = x.memo.startsWith('Offer') ? markOfferMade : markRequestMade
-    mock(x)
+    addTake(x)
     x.marker = f.call(this, x.position, x.pk, x.desc)
     d.tXs_mapped.push(x)
   }
@@ -237,61 +241,6 @@ function markTaking (position, title, content) { // {{{1
   return mark.call(this,
     position, title, content
   );
-}
-
-function mock (x) { // {{{1
-  let y = {}
-  let url = 'https://github.com/didalik/stellar-help-exchange/blob/main/README.md'
-  switch(x.txid) {
-    case '439680cff6b1f8569790871df5533d6416ed4657f9b81f97032c0550ffd0a630': {
-      let hash = '#stellar-hex-for-sale'
-      x.desc = `
-<b>Stellar HEX: FOR SALE</b><br/>
-Full or partial ownership. Inquiry fee HEXA 100.
-<a href='${url}${hash}' target='_blank'>More...</a>
-<hr/>
-<button class='take' onclick='window.vm.c.kit.take("${x.txid}")'>Take</button>
-      `
-      Object.assign(x.position, { lat: 26.4668328, lng: 127.8232348 }) // Onna
-      return;
-    }
-    case 'fc373d5b35ce71f3d4c9e4501f9201ce49d6d4b77bc976fbec73cd008ca58bb3': {
-      let hash = '#%D0%B4%D1%96%D0%B4-alik--the-kids-aim-for-businesses'
-      x.desc = `
-<b>Дід Alik & the Kids: AIM FOR BUSINESSES</b><br/>
-Automated Integration Modeling by ДA&K. Inquiry fee HEXA 10.
-<a href='${url}${hash}' target='_blank'>More...</a>
-<hr/>
-<button class='take' onclick='window.vm.c.kit.take("${x.txid}")'>Take</button>
-      `
-      Object.assign(x.position, { lat: 50.4462921, lng: 30.5104239 }) // Kyiv
-      return;
-    }
-    case 'd259a5acc158c1ce12c4db00c740094beb08a372cd443badeeab9484308a614e': {
-      let hash = '#stellar-hex-partners-welcome'
-      Object.assign(y, x)
-      y.desc = `
-<b>Stellar HEX: PARTNERS WELCOME</b><br/>
-Signing bonus HEXA 1000 + profit / 2.
-<a href='${url}${hash}' target='_blank'>More...</a>
-<hr/>
-<button class='take' onclick='window.vm.c.kit.take("${y.txid}")'>Take</button>
-      `
-      Object.assign(y.position, { lat: 48.1165763, lng: -123.4444233 }) // Port Angls
-      y.marker = markRequestMade.call(window.vm, y.position, y.pk, y.desc)
-
-      hash = '#stellar-hex-help-wanted'
-      x.desc = `
-<b>Stellar HEX: HELP WANTED</b><br/>
-Signing bonus HEXA 1000 + (job done) * (hourly rate).
-<a href='${url}${hash}' target='_blank'>More...</a>
-<hr/>
-<button class='take' onclick='window.vm.c.kit.take("${x.txid}")'>Take</button>
-      `
-      Object.assign(x.position, { lat: 8.7961073, lng: -79.5552843 }) // Tagoba
-      return;
-    }
-  }
 }
 
 async function onIssuerEffect (effect) { // claimable_balance_claimant_created {{{1

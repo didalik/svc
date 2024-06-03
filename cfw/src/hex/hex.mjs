@@ -1,5 +1,3 @@
-import { configure, } from './util.mjs' // {{{1
-
 import { Codec, Model, View, } from '../../../lib/mvc.mjs' // {{{1
 import * as kit from '../../../hex/lib/kit.mjs'
 //import json from '../../../../../hex/user/prod/config/f_add_hex_makes.json'
