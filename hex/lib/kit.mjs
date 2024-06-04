@@ -73,8 +73,21 @@ class ModalPane { // {{{1
   } // }}}2
 }
 
+function addMx () { // {{{1
+  let { s, e, c, d } = this
+  const buttonMx = document.createElement("button")
+  buttonMx.textContent = 'Mx'
+  buttonMx.title = 'Make Offer or Request'
+  buttonMx.type = 'button'
+  buttonMx.addEventListener('click', _ => alert('XA'))
+  const divMx = document.createElement("div")
+  divMx.appendChild(buttonMx)
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(divMx)
+}
+
 function addTake (x) { // {{{1
-  x.desc += `<hr/><button class='take' onclick='window.vm.c.kit.take("${x.txid}")'>Take</button>`
+  let take = `window.vm.c.kit.take("${x.txid}")`
+  x.desc += `<hr/><button class='take' onclick='${take}'>Take</button>`
 }
 
 function decodeDownstream () { // {{{1
@@ -145,9 +158,8 @@ function initView () { // {{{1
     zoom: 2
   };
   loader.load().then(g => {
-    c.google = g
     map = new g.maps.Map(document.getElementById("map"), mapOptions);
-    mapTypeOSM = new g.maps.ImageMapType({
+    let mapTypeOSM = new g.maps.ImageMapType({
       getTileUrl: function(coord, zoom) {
         return `https://tile.openstreetmap.org/${zoom}/${coord.x}/${coord.y}.png`;
       },
@@ -162,6 +174,7 @@ function initView () { // {{{1
     return google.maps.importLibrary('maps');
   }).then(r => {
     c.maps = r
+    addMx.call(this)
 
     c.view.initialized = true
     c.codec?.decodeX()
