@@ -58,7 +58,7 @@ class ModalPane { // {{{1
 
     // When the user clicks anywhere outside of the content, close the modal.
     window.onclick = function(event) {
-      if (event.target == background) {
+      if (event.target == background && span.style.display == 'block') {
         background.style.display = "none";
         content.style.display = "none";
         !!close && close()
@@ -70,6 +70,22 @@ class ModalPane { // {{{1
     vm.c.view.modalPane = new ModalPane(vm)
     vm.c.view.modalPane.show('welcome2HEX')
     return 'View initialized.';
+  }
+  static take (vm, txid) { // {{{2
+    let tX = vm.d.tXs_mapped.find(x => x.txid == txid)
+    let content = document.getElementById('takeX')
+    let x = document.getElementById('takeXX')
+    let secret = document.getElementById('stellar-secret')
+    let buttonConfirm = document.getElementById('confirm-take')
+    buttonConfirm.onclick = function () {
+      vm.e.log('- taking tX', tX, 'secret', secret)
+
+      x.style.display = 'none'
+      content.appendChild(document.createTextNode('loading your account...'))
+    }
+    x.style.display = 'block'
+    vm.c.view.modalPane.show('takeX')
+    return 'taking...';
   } // }}}2
 }
 
@@ -296,8 +312,7 @@ function resolve (result) { // {{{1
 }
 
 function take (txid) { // {{{1
-  let { s, e, c, d } = window.vm
-  e.log('- take txid', txid)
+  ModalPane.take(window.vm, txid)
 }
 
 function tXpush (tX) { // {{{1

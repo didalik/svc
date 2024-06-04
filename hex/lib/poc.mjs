@@ -172,7 +172,7 @@ async function onIssuerEffectCyn (poc, effect) { // {{{1
       then(t => (tx = t).operations()).then(ops => {
         if (tx.memo_type != MemoText) { // no, a takeOffer effect
           return;                       //
-        }                               // yes, take it:
+        }                               // yes, take it: {{{2
         //                                 p a y
         //                                /
         //                               / Offer
@@ -181,7 +181,7 @@ async function onIssuerEffectCyn (poc, effect) { // {{{1
         //                              \
         //                               \ Request
         //                                \
-        //                                 d e l i v e r
+        //                                 d e l i v e r }}}2
         if (tx.memo.startsWith('Offer')) {
           poc.Cyn.takes.push([takeOffer, poc.Cyn.account, 
             Keypair.fromSecret(poc.Cyn.keys[0]), 
