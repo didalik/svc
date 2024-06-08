@@ -5,9 +5,10 @@
  * * */
 
 import { description, parseHEXA, HEX_FEE, } from './api.mjs' // {{{1
-import { secdVm, } from './sdk.mjs'
+import { secdVm, storeKeys, } from './sdk.mjs'
+import { addLine, retrieveItem, storeItem, } from '../../lib/util.mjs'
 import {
-  MemoText,
+  Keypair, MemoText,
 } from '@stellar/stellar-sdk'
 import { Loader } from '@googlemaps/js-api-loader'
 import { apiKey, } from '../../../../../env.mjs'
@@ -76,17 +77,36 @@ class ModalPane { // {{{1
     let content = document.getElementById('takeX')
     let x = document.getElementById('takeXX')
     let secret = document.getElementById('stellar-secret')
+    secret.value = retrieveItem('secret')
+    let keep = document.getElementById('keep-secret-locally')
+    keep.checked = true
     let buttonConfirm = document.getElementById('confirm-take')
-    buttonConfirm.onclick = function () {
-      vm.e.log('- taking tX', tX, 'secret', secret)
-
-      x.style.display = 'none'
-      content.appendChild(document.createTextNode('loading your account...'))
+    buttonConfirm.focus()
+    buttonConfirm.onclick = _ => {
+      buttonConfirm.disabled = true
+      vm.c.codec.encodeUpstream.queue.push([takeX,
+        tX, content, x, secret.value, keep.checked
+      ])
+      encodeX.call(vm)
     }
     x.style.display = 'block'
     vm.c.view.modalPane.show('takeX')
     return 'taking...';
   } // }}}2
+}
+
+class User { // {{{1
+  constructor (vm, aos, f = null) { // {{{2
+    this.vm = vm
+    if (f) {
+      f.call(vm, this)
+    }
+  }
+
+  take (tX) { // {{{2
+    return this.promise.then(_ => Promise.resolve('done'))
+  }
+  // }}}2
 }
 
 function addMx () { // {{{1
@@ -104,6 +124,29 @@ function addMx () { // {{{1
 function addTake (x) { // {{{1
   let take = `window.vm.c.kit.take("${x.txid}")`
   x.desc += `<hr/><button class='take' onclick='${take}'>Take</button>`
+}
+
+function cKP (user) { // {{{1
+  let { s, e, c, d } = this
+  if (!e.nw.startsWith('Test')) {
+    console.error('TODO Stellar public network')
+    throw 'FIXME';
+  }
+  let { promise, resolve, reject } = Promise.withResolvers()
+  user.promise = promise
+  let [HEX_CREATOR_SK, HEX_CREATOR_PK] = storeKeys.call(this)
+  fetch(`https://friendbot.stellar.org?addr=${encodeURIComponent(HEX_CREATOR_PK)}`)
+  .then(response => response.json()).then(responseJSON => {
+    e.log('HEX_CREATOR account created txId', responseJSON.id)
+    return e.server.loadAccount(HEX_CREATOR_PK);
+  })
+  .then(account => {
+    e.log('loaded HEX_CREATOR', account.id)
+    c.account = account
+    d.keys = [HEX_CREATOR_SK, HEX_CREATOR_PK]
+    d.kp = Keypair.fromSecret(HEX_CREATOR_SK)
+    resolve()
+  })
 }
 
 function decodeDownstream () { // {{{1
@@ -139,6 +182,11 @@ function encodeUpstream () { // {{{1
 
 function encodeX () { // {{{1
   let { s, e, c, d } = this
+  while (c.codec.encodeUpstream.queue.length > 0) {
+    let x = c.codec.encodeUpstream.queue.shift()
+    let f = x.shift()
+    f.call(this, ...x)
+  }
 }
 
 function initModel () { // {{{1
@@ -313,6 +361,25 @@ function resolve (result) { // {{{1
 
 function take (txid) { // {{{1
   ModalPane.take(window.vm, txid)
+}
+
+function takeX (tX, content, x, secret, keep) { // {{{1
+  let { s, e, c, d } = this
+  x.style.display = 'none'
+  content.appendChild(document.createTextNode('loading your account... '))
+  keep && storeItem('secret', secret)
+
+  let UNEXPECTED = e => {
+    console.error(e.message)
+    throw e;
+  }
+  let pk = Keypair.fromSecret(secret).publicKey()
+  d.user.keys ??= [secret, pk]
+  e.server.loadAccount(pk).then(account => new User(this, account).take(tX))
+  .catch(e => e.message == 'Not Found' ? new User(this, secret, cKP).take(tX) :
+    UNEXPECTED(e))
+  .then(r => addLine(content, r))
+  .catch(e => console.error('UNEXPECTED', e))
 }
 
 function tXpush (tX) { // {{{1
