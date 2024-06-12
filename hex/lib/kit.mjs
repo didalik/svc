@@ -5,10 +5,12 @@
  * * */
 
 import { description, parseHEXA, HEX_FEE, } from './api.mjs' // {{{1
-import { secdVm, storeKeys, } from './sdk.mjs'
+import { 
+  createAccount, secdVm, storeKeys, trustAssets, updateTrustlineAndPay,
+} from './sdk.mjs'
 import { addLine, retrieveItem, storeItem, } from '../../lib/util.mjs'
 import {
-  Keypair, MemoText,
+  Keypair, MemoText, TransactionBuilder,
 } from '@stellar/stellar-sdk'
 import { Loader } from '@googlemaps/js-api-loader'
 import { apiKey, } from '../../../../../env.mjs'
@@ -96,15 +98,46 @@ class ModalPane { // {{{1
 }
 
 class User { // {{{1
-  constructor (vm, aos, f = null) { // {{{2
-    this.vm = vm
+  constructor (vm, accountORsecret, f = null) { // {{{2
+    let { promise, resolve, reject } = Promise.withResolvers()
+    this.vm = vm; this.loaded = promise
+
+    let updateTrustlineHEXA = _ => {
+      if (!vm.d.user.account.balances.find(b => 
+        b.asset_code == 'HEXA' && b.is_clawback_enabled
+      )) {
+        return resolve();
+      }
+      updateTrustlineAndPay.call(vm, 
+        vm.d.user.account, Keypair.fromSecret(vm.d.user.keys[0]), 
+        vm.d.user.keys[1], vm.d.limit, vm.d.HEXA, vm.d.keysIssuer[1], issuerSign
+      ).then(_ => resolve())
+    }
+
+    let loaded = account => {
+      vm.d.user.account = account
+      if (account.balances.length >= 3) { 
+        return updateTrustlineHEXA();
+      }
+      trustAssets.call(vm, account, Keypair.fromSecret(vm.d.user.keys[0]),
+        vm.d.limit, vm.d.ClawableHexa, vm.d.HEXA
+      ).then(_ => updateTrustlineHEXA())
+    }
+
     if (f) {
-      f.call(vm, this)
+      let secret = accountORsecret
+      let pk = Keypair.fromSecret(secret).publicKey()
+      vm.d.user.keys = [secret, pk]
+      f.call(vm).then(kp => createAccount.call(vm, pk, '10', {}, kp))
+      .then(txId => vm.e.server.loadAccount(pk))
+      .then(account => loaded(account))
+    } else {
+      loaded(accountORsecret)
     }
   }
 
   take (tX) { // {{{2
-    return this.promise.then(_ => Promise.resolve('done'))
+    return this.loaded.then(_ => Promise.resolve('done'))
   }
   // }}}2
 }
@@ -126,27 +159,24 @@ function addTake (x) { // {{{1
   x.desc += `<hr/><button class='take' onclick='${take}'>Take</button>`
 }
 
-function cKP (user) { // {{{1
+function cKP () { // {{{1
   let { s, e, c, d } = this
   if (!e.nw.startsWith('Test')) {
     console.error('TODO Stellar public network')
     throw 'FIXME';
   }
-  let { promise, resolve, reject } = Promise.withResolvers()
-  user.promise = promise
   let [HEX_CREATOR_SK, HEX_CREATOR_PK] = storeKeys.call(this)
-  fetch(`https://friendbot.stellar.org?addr=${encodeURIComponent(HEX_CREATOR_PK)}`)
-  .then(response => response.json()).then(responseJSON => {
+  return fetch(
+    `https://friendbot.stellar.org?addr=${encodeURIComponent(HEX_CREATOR_PK)}`
+  ).then(response => response.json()).then(responseJSON => {
     e.log('HEX_CREATOR account created txId', responseJSON.id)
     return e.server.loadAccount(HEX_CREATOR_PK);
-  })
-  .then(account => {
+  }).then(account => {
     e.log('loaded HEX_CREATOR', account.id)
     c.account = account
     d.keys = [HEX_CREATOR_SK, HEX_CREATOR_PK]
-    d.kp = Keypair.fromSecret(HEX_CREATOR_SK)
-    resolve()
-  })
+    return Promise.resolve(d.kp = Keypair.fromSecret(HEX_CREATOR_SK));
+  });
 }
 
 function decodeDownstream () { // {{{1
@@ -245,6 +275,15 @@ function initView () { // {{{1
     c.view.resolve(ModalPane.init(this))
   })
   .catch(e => { console.error(e); }); 
+}
+
+function issuerSign (txXdr, tag) { // {{{1
+  let { s, e, c, d } = this
+  let secret = 'SACNSG7NEYFPAGXFA3CGVJJS2JSMIHTRHETZRB47XKESOPW7TAZLEN5L'
+  const keypair = Keypair.fromSecret(secret)
+  let t = TransactionBuilder.fromXDR(txXdr, e.nw)
+  t.sign(keypair)
+  return Promise.resolve(t.toXDR());
 }
 
 function mark (position, title, content) { // {{{1

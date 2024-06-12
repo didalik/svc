@@ -69,7 +69,7 @@ async function addHEX_Agent (limit) { // {{{1
   e.log('addHEX_Agent agent trusts HEXA limit', limit, 'txId', txId)
 
   // Fund Agent with HEXA, update Agent's HEXA trustline
-  await fundAgent.call(this,
+  await updateTrustlineAndPay.call(this,
     issuer, Keypair.fromSecret(HEX_Issuer_SK), HEX_Agent_PK, limit, HEXA
   )
   
@@ -216,18 +216,18 @@ async function createAccount ( // {{{1
   return tx.id;
 }
 
-async function fundAgent( // {{{1
-  issuer, issuerKeypair, destination, amount, asset
+async function updateTrustlineAndPay( // {{{1
+  account, accountKeypair, destination, amount, asset, source = null, sign = null
 ) {
   let { s, e, c, d } = this
-  let tx = new TransactionBuilder(issuer, // increasing the issuer's
+  let tx = new TransactionBuilder(account, // increasing the account's
     {                                     //  sequence number
       fee: BASE_FEE,
       networkPassphrase: e.nw,
     }
-  ).addOperation(Operation.payment({ asset, destination, amount })).
+  ).addOperation(Operation.payment({ asset, destination, amount, source })).
     addOperation(Operation.setTrustLineFlags({ 
-      asset,
+      asset, source,
       trustor: destination,
       flags: {
         clawbackEnabled: false
@@ -235,7 +235,12 @@ async function fundAgent( // {{{1
     })).
     setTimeout(30).build()
 
-  tx.sign(issuerKeypair)
+  tx.sign(accountKeypair)
+  if (sign) {
+    return sign.call(this, tx.toXDR(), 'updateTrustline').then(txXdr => 
+      e.server.submitTransaction(TransactionBuilder.fromXDR(txXdr, e.nw))
+    );
+  }
   tx =  await e.server.submitTransaction(tx).catch(e => console.error(
     '*** ERROR ***', e.response.data.extras.result_codes
   ))
@@ -455,22 +460,27 @@ async function trustAssets( // {{{1
 }
 
 async function updateTrustline( // {{{1
-  issuer, issuerKeypair, trustor, asset
+  account, accountKeypair, trustor, asset, source = null, sign = null
 ) {
   let { s, e, c, d } = this
-  let tx = new TransactionBuilder(issuer, // increasing the issuer's
+  let tx = new TransactionBuilder(account, // increasing the account's
     {                                     //  sequence number
       fee: BASE_FEE,
       networkPassphrase: e.nw,
     }
-  ).addOperation(Operation.setTrustLineFlags({ asset, trustor,
+  ).addOperation(Operation.setTrustLineFlags({ asset, trustor, source,
       flags: {
         clawbackEnabled: false
       },
     })).
     setTimeout(30).build()
 
-  tx.sign(issuerKeypair)
+  tx.sign(accountKeypair)
+  if (sign) {
+    return sign.call(this, tx.toXDR(), 'updateTrustline').then(txXdr => 
+      e.server.submitTransaction(TransactionBuilder.fromXDR(txXdr, e.nw))
+    );
+  }
   tx =  await e.server.submitTransaction(tx).catch(e => console.error(
     '*** ERROR ***', e.response.data.extras.result_codes
   ))
@@ -486,5 +496,5 @@ export { // {{{1
   makeSellOffer, memo2str,
   secdVm,
   storeKeys, takeClaimableBalance,
-  trustAssets, updateTrustline,
+  trustAssets, updateTrustline, updateTrustlineAndPay,
 }
